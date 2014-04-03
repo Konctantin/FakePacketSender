@@ -1,0 +1,91 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:AvalonEdit="clr-namespace:ICSharpCode.AvalonEdit"
+	xmlns:editing="clr-namespace:ICSharpCode.AvalonEdit.Editing"
+>
+    <Style TargetType="{x:Type AvalonEdit:TextEditor}">
+        <Setter Property="Foreground"    Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Background"    Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+        <Setter Property="FlowDirection" Value="LeftToRight" />
+
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem Command="Cut"    Header="{x:Static AvalonEdit:Localization.Cut}" />
+                    <MenuItem Command="Copy"   Header="{x:Static AvalonEdit:Localization.Copy}" />
+                    <MenuItem Command="Paste"  Header="{x:Static AvalonEdit:Localization.Paste}" />
+                    <MenuItem Command="Delete" Header="{x:Static AvalonEdit:Localization.Delete}" />
+                    <Separator />
+                    <MenuItem Command="Undo"   Header="{x:Static AvalonEdit:Localization.Undo}" />
+                    <MenuItem Command="Redo"   Header="{x:Static AvalonEdit:Localization.Redo}" />
+                    <Separator />
+                    <MenuItem Command="AvalonEdit:AvalonEditCommands.Comment"   Header="{x:Static AvalonEdit:Localization.Comment}" />
+                    <MenuItem Command="AvalonEdit:AvalonEditCommands.UnComment" Header="{x:Static AvalonEdit:Localization.Uncomment}" />
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type AvalonEdit:TextEditor}">
+                    <ScrollViewer Name="PART_ScrollViewer"
+						Focusable                   ="False"
+						CanContentScroll            ="True"
+                        VerticalContentAlignment    ="Top"
+						HorizontalContentAlignment  ="Left"
+
+						VerticalScrollBarVisibility     ="{TemplateBinding VerticalScrollBarVisibility}"
+						HorizontalScrollBarVisibility   ="{TemplateBinding HorizontalScrollBarVisibility}"
+						Content                         ="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextArea}"
+						Background                      ="{TemplateBinding Background}"
+						Padding                         ="{TemplateBinding Padding}"
+						BorderBrush                     ="{TemplateBinding BorderBrush}"
+						BorderThickness                 ="{TemplateBinding BorderThickness}"
+ />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="WordWrap" Value="True">
+                            <Setter TargetName="PART_ScrollViewer" Property="HorizontalScrollBarVisibility" Value="Disabled" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type editing:TextArea}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+
+        <Setter Property="SelectionBrush">
+            <Setter.Value>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="SelectionBorder">
+            <Setter.Value>
+                <Pen Brush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Thickness="1" />
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="SelectionForeground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type editing:TextArea}">
+                    <DockPanel Focusable="False">
+                        <ItemsControl DockPanel.Dock="Left" Focusable="False"
+                                      ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LeftMargins}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                        <ContentPresenter Panel.ZIndex="-1" Focusable="False"
+                                          Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextView}" />
+                    </DockPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
