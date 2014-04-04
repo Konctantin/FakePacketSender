@@ -44,7 +44,15 @@ extern "C" __declspec(dllexport) HRESULT Inject(_In_ LPCSTR param)
         wsz,
         L"FakePacketSender.InjectedEntry",
         L"Run",
-        L"lol", &pReturnValue);
+        wsz,
+        &pReturnValue);
+
+    if (hr = pClrRuntimeHost->Stop() != S_OK)
+    {
+        _com_error err(hr);
+        MessageBox(0, err.ErrorMessage(), L"Error", 0);
+        return -1;
+    }
 
     if (hr != S_OK)
     {

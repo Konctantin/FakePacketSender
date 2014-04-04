@@ -15,9 +15,13 @@ namespace FakePacketSender
         {
             try
             {
+                App.StartupPath = new System.IO.FileInfo(scriptName).DirectoryName;
+
                 Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
+
                 Application app = new Application();
-                app.Run(new MainWindow());
+                var window = new MainWindow();
+                app.Run(window);
             }
             catch (Exception ex)
             {

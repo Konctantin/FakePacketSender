@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Xml.Serialization;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using NLua;
 
 namespace FakePacketSender
@@ -22,24 +16,54 @@ namespace FakePacketSender
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ObservableCollection<Script> scriptList = new ObservableCollection<Script>();
 
         private Lua lua = new Lua();
         public MainWindow()
         {
             InitializeComponent();
-            ConsoleWriter.Initialize("log.log", teLog, true);
+
+            ConsoleWriter.Initialize(Path.Combine(App.StartupPath, "log.log"), teLog, true);
+
             try
             {
+                App.Offsets = new Offsets() { Send2 = 0x1090, VTable = 0 };
+
                 RegisterFunctions();
+
+                IntelliSienceManager.IntelliSienceCollection = new List<WowApi>()
+                {
+                    new WowApi() { Name = "CreateFakePacket", Signature = "packet = CreateFakePaket(opcode)",  Description = "Создает новый пакет для отправки серверу.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteBits",        Signature = ":WriteBits(value, bitcount)",  Description = "Записывает в пакет значение типа uint с указанным количеством бит.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteInt32",       Signature = ":WriteInt32(value)",  Description = "Записывает в пакет значение типа int.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteFloat",       Signature = ":WriteFloat(value)",  Description = "Записывает в пакет значение типа float.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteBytes",       Signature = ":WriteBytes(...)",  Description = "Записывает в пакет последовательность байт.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "Clear",            Signature = ":Clear()",  Description = "Очищает пакет от данных.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "Send",             Signature = ":Send()",  Description = "Отправляет данный пакет серверу.", ImageType = ImageType.Method },
+                };
+
+                if (File.Exists(Path.Combine(App.StartupPath, "sctipts.xml")))
+                {
+                    using (var file = File.Open(Path.Combine(App.StartupPath, "sctipts.xml"), FileMode.Open))
+                    {
+                        scriptList = (ObservableCollection<Script>)new XmlSerializer(typeof(ObservableCollection<Script>)).Deserialize(file);
+                    }
+                }
+                else
+                {
+                    scriptList.Add(new Script { Name = "<new>", Lua = "-- local packet = CreateFakePacket(0);" });
+                }
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
+
+            this.DataContext = scriptList;
         }
 
         private void RegisterFunctions()
         {
-            //Thread.Sleep()
             lua.LoadCLRPackage();
 
             lua.RegisterFunction("sleep", typeof(Thread)
@@ -51,6 +75,8 @@ namespace FakePacketSender
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            Save_Click(null, null);
+
             if (lua != null)
             {
                 lua.Dispose();
@@ -76,7 +102,38 @@ namespace FakePacketSender
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            
+            try
+            {
+                var packet = new FakePacket.FakePacket(456);
+                packet.WriteInt32(10);
+                packet.WriteBits(1, 22);
+                packet.Flush();
+                packet.WriteFloat(1f);
+                packet.Send();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void CommandBinding_New_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        {
+            scriptList.Add(new Script { Name = "<new>", Lua = "-- local packet = CreateFakePacket(0);" });
+        }
+
+        private void CommandBinding_Delete_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        {
+            if (lbScripts.SelectedIndex > -1)
+            {
+                scriptList.RemoveAt(lbScripts.SelectedIndex);
+            }
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            using (var file = File.Open(Path.Combine(App.StartupPath, "sctipts.xml"), FileMode.OpenOrCreate))
+                new XmlSerializer(typeof(ObservableCollection<Script>)).Serialize(file, scriptList);
         }
     }
 }

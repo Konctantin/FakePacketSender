@@ -40,6 +40,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -59,6 +60,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Offsets.cs" />
+    <Compile Include="Script.cs" />
+    <Compile Include="SelectProcessDialog.xaml.cs">
+      <DependentUpon>SelectProcessDialog.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -68,19 +74,24 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ConsoleWriter.cs" />
-    <Compile Include="FakePacket\BitStream.cs" />
     <Compile Include="FakePacket\BitStreamWriter.cs" />
     <Compile Include="FakePacket\CDataStore.cs" />
     <Compile Include="FakePacket\FakePacket.cs" />
     <Compile Include="InjectedEntry.cs" />
-    <Compile Include="Inject\Imports.cs" />
     <Compile Include="Inject\Injector.cs" />
-    <Compile Include="Inject\ManagedParams.cs" />
     <Compile Include="Inject\ProcessMemory.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SelectProcessDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\KamillaStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -116,6 +127,11 @@
       <Project>{3cb8979b-d2b5-4139-8e7b-c75df4433014}</Project>
       <Name>NLua</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="offsets.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

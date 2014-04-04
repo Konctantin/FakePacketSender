@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -40,7 +38,7 @@ namespace FakePacketSender.Inject
             return CreateRemoteThread(this.Process.Handle, 0, 0, func, arg, 0, IntPtr.Zero);
         }
 
-        private IntPtr GetHostFuncAddr(string func)
+        private IntPtr GetHostFuncAddr(string func, ref IntPtr moduleHandle)
         {
             var hLoaded  = LoadLibraryA(HostDllName);
             var lpInject = GetProcAddress(hLoaded, func);
@@ -49,37 +47,55 @@ namespace FakePacketSender.Inject
 
             var hostAddr = this.Process.Modules.Cast<ProcessModule>()
                 .Where(m => m.FileName == HostDllName)
-                .FirstOrDefault().BaseAddress.ToInt32();
+                .FirstOrDefault();
 
-            return new IntPtr(hostAddr + offset);
+            if (hostAddr == null)
+                return IntPtr.Zero;
+
+            moduleHandle = hostAddr.BaseAddress;
+
+            return IntPtr.Add(hostAddr.BaseAddress, offset);
         }
 
         public Injector(Process process, string hostName)
             :base(process)
         {
-            this.HostDllName = Path.Combine(Environment.CurrentDirectory, hostName);
+            if (string.IsNullOrWhiteSpace(hostName))
+                throw new ArgumentNullException("hostName");
 
-	        var fnLoadLibrary = GetProcAddress(GetModuleHandle("Kernel32"), "LoadLibraryA");
+            this.HostDllName  = Path.Combine(Environment.CurrentDirectory, hostName);
+	        var fnLoadLibrary = GetProcAddress(GetModuleHandle("kernel32"), "LoadLibraryA");
 
             // load host
             var argAddr = WriteCString(this.HostDllName, Encoding.ASCII);
-            var thread = CreateRemoteThread(fnLoadLibrary, argAddr);
+            var thread  = CreateRemoteThread(fnLoadLibrary, argAddr);
+
             WaitForSingleObject(thread, 0xFFFFFFFF);
-
-            uint exitCode = 0u;
-            GetExitCodeThread(thread, out exitCode);
-
             Free(argAddr);
             CloseHandle(thread);
 
             // call host func
-            var param = this.WriteCString(Path.Combine(Environment.CurrentDirectory, @"FakePacketSender.exe"));
+            var injFileName = this.WriteCString(Path.Combine(Environment.CurrentDirectory, @"FakePacketSender.exe"));
+            var moduleHandle = IntPtr.Zero;
 
-            var hostFunc = GetHostFuncAddr("Inject");
-            var thread2 = CreateRemoteThread(hostFunc, param);
+            var injectFunc = GetHostFuncAddr("Inject", ref moduleHandle);
+            if (injectFunc == IntPtr.Zero)
+                throw new Exception("hostFunc == IntPtr.Zero");
+
+            var thread2 = CreateRemoteThread(injectFunc, injFileName);
+
             WaitForSingleObject(thread2, 0xFFFFFFFF);
-            Free(param);
+            this.Free(injFileName);
             CloseHandle(thread2);
+
+            // free
+            var fnFreeLibrary = GetProcAddress(GetModuleHandle("kernel32"), "FreeLibrary");
+            var threadFree    = CreateRemoteThread(fnFreeLibrary, moduleHandle);
+
+            WaitForSingleObject(threadFree, 0xFFFFFFFF);
+
+            //var modules = string.Join("\r\n", this.Process.Modules.Cast<ProcessModule>().Select(m => m.ModuleName));
+            //MessageBox.Show(modules);
         }
     }
 }

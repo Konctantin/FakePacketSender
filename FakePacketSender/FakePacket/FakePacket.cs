@@ -8,17 +8,41 @@ using System.Diagnostics;
 
 namespace FakePacketSender.FakePacket
 {
-    public class FakePacket : BitStreamWriter
+    public class FakePacket
+        : BitStreamWriter
     {
-        public unsafe delegate void Send2(CDataStore* packet);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        delegate uint Send2(IntPtr packet);
 
         public int Opcode { get; private set; }
+        private Process Process;
+        private Send2 Send2Func;
+        private IntPtr vTable;
 
         public FakePacket(int opcode)
             : base()
         {
             this.Opcode = opcode;
-            this.WriteReverse((uint)opcode, 32);
+            this.WriteInt32(this.Opcode);
+
+            //init delegates
+            this.Process = Process.GetCurrentProcess();
+
+            this.Send2Func = Marshal.GetDelegateForFunctionPointer(
+                IntPtr.Add(Process.MainModule.BaseAddress, 0x1090),
+                typeof(Send2)) as Send2;
+
+            if (Send2Func == null)
+                throw new Exception("Can't create delegate \"Send2\"!");
+
+            vTable = IntPtr.Add(Process.MainModule.BaseAddress, 0x1060);
+        }
+
+        public void Clear()
+        {
+            this.Buffer.Clear();
+            this.WriteInt32(this.Opcode);
+            this.Flush();
         }
 
         public void WriteBits(uint value, int count)
@@ -28,29 +52,46 @@ namespace FakePacketSender.FakePacket
 
         public void WriteInt32(int value)
         {
-            this.Buffer.AddRange(BitConverter.GetBytes(value));
             this.Flush();
+            this.Buffer.AddRange(BitConverter.GetBytes(value));
         }
 
         public void WriteFloat(float value)
         {
-            this.Buffer.AddRange(BitConverter.GetBytes(value));
             this.Flush();
+            this.Buffer.AddRange(BitConverter.GetBytes(value));
         }
 
-        public void Send_2()
+        public void WriteBytes(params byte[] bytes)
         {
-            Console.WriteLine("Send packet: 0x{0:X8}", Opcode);
+            this.Flush();
+            this.Buffer.AddRange(bytes);
         }
 
         public unsafe void Send()
         {
-            fixed (byte* pointer = this.Buffer.ToArray())
+            fixed (byte* bytes = this.Buffer.ToArray())
             {
-                var packet = new CDataStore(IntPtr.Zero, new IntPtr(pointer), this.Buffer.Count);
-                Send2 sendTo = (Send2)Marshal.GetDelegateForFunctionPointer(IntPtr.Zero, typeof(Send2));
-                sendTo(&packet);
-                Debug.WriteLine("Send2 Opcode: {0}, Size: {1}", Opcode, this.Buffer.Count);
+                var packet = new CDataStore((void*)this.vTable, bytes, this.Buffer.Count);
+
+                Debug.WriteLine(string.Join(" ", this.Buffer.Select(n => n.ToString("X02"))));
+
+                var packetLen = Marshal.SizeOf(typeof(CDataStore));
+                var packetPtr = Marshal.AllocHGlobal(packetLen);
+                Marshal.StructureToPtr(packet, packetPtr, true);
+
+                try
+                {
+                    Send2Func(packetPtr);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(packetPtr);
+                }
             }
         }
 
