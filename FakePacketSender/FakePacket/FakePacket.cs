@@ -29,13 +29,13 @@ namespace FakePacketSender.FakePacket
             this.Process = Process.GetCurrentProcess();
 
             this.Send2Func = Marshal.GetDelegateForFunctionPointer(
-                IntPtr.Add(Process.MainModule.BaseAddress, 0x1090),
+                IntPtr.Add(Process.MainModule.BaseAddress, App.Offsets.Send2),
                 typeof(Send2)) as Send2;
 
             if (Send2Func == null)
                 throw new Exception("Can't create delegate \"Send2\"!");
 
-            vTable = IntPtr.Add(Process.MainModule.BaseAddress, 0x1060);
+            vTable = IntPtr.Add(Process.MainModule.BaseAddress, App.Offsets.VTable);
         }
 
         public void Clear()
@@ -70,7 +70,8 @@ namespace FakePacketSender.FakePacket
 
         public unsafe void Send()
         {
-            fixed (byte* bytes = this.Buffer.ToArray())
+            var byteBuffer = this.Buffer.ToArray();
+            fixed (byte* bytes = byteBuffer)
             {
                 var packet = new CDataStore((void*)this.vTable, bytes, this.Buffer.Count);
 
