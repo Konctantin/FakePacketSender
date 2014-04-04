@@ -11,7 +11,7 @@ namespace FakePacketSender.FakePacket
     public class FakePacket
         : BitStreamWriter
     {
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         delegate uint Send2(IntPtr packet);
 
         public int Opcode { get; private set; }
@@ -29,13 +29,13 @@ namespace FakePacketSender.FakePacket
             this.Process = Process.GetCurrentProcess();
 
             this.Send2Func = Marshal.GetDelegateForFunctionPointer(
-                IntPtr.Add(Process.MainModule.BaseAddress, 0x1090),
+                IntPtr.Add(Process.MainModule.BaseAddress, App.Offsets.Send2),
                 typeof(Send2)) as Send2;
 
             if (Send2Func == null)
                 throw new Exception("Can't create delegate \"Send2\"!");
 
-            vTable = IntPtr.Add(Process.MainModule.BaseAddress, 0x1060);
+            vTable = IntPtr.Add(Process.MainModule.BaseAddress, App.Offsets.VTable);
         }
 
         public void Clear()
@@ -72,7 +72,7 @@ namespace FakePacketSender.FakePacket
         {
             fixed (byte* bytes = this.Buffer.ToArray())
             {
-                var packet = new CDataStore((void*)this.vTable, bytes, this.Buffer.Count);
+                var packet = new CDataStore((void*)vTable, bytes, this.Buffer.Count);
 
                 Debug.WriteLine(string.Join(" ", this.Buffer.Select(n => n.ToString("X02"))));
 

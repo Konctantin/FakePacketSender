@@ -21,7 +21,7 @@ namespace FakePacketSender.FakePacket
             this.vTable = vTable;
             this.Buffer = buffer;
             this.mBase  = 0;
-            this.alloc  = 0;
+            this.alloc  = -1;
             this.size   = size;
             this.read   = 0;
         }
