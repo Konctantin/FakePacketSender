@@ -11,8 +11,10 @@
         <ResourceDictionary Source="Themes/KamillaStyle.xaml" />
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="New" Executed="CommandBinding_New_Executed"/>
+        <CommandBinding Command="New"    Executed="CommandBinding_New_Executed"/>
         <CommandBinding Command="Delete" Executed="CommandBinding_Delete_Executed"/>
+        <CommandBinding Command="Play"   Executed="CommandBinding_Play_Executed" CanExecute="CommandBinding_Play_CanExecute" />
+        <CommandBinding Command="Stop"   Executed="CommandBinding_Stop_Executed" CanExecute="CommandBinding_Stop_CanExecute"/>
     </Window.CommandBindings>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -25,7 +27,7 @@
             <RowDefinition Height="194*"/>
         </Grid.RowDefinitions>
 
-        <ListBox Margin="0,0,5,0" Grid.RowSpan="3" Name="lbScripts" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" DisplayMemberPath="Name">
+        <ListBox Margin="0,0,5,0" Grid.RowSpan="3" Name="lbScripts" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" DisplayMemberPath="Name" Style="{DynamicResource ListBoxStyle1}">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Command="New" Header="Создать"/>
@@ -34,14 +36,16 @@
             </ListBox.ContextMenu>
         </ListBox>
         <GridSplitter Grid.RowSpan="3" Width="5"/>
+        <GridSplitter Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="5"/>
 
-        <Button Content="Выполнить"  Name="Run"  Grid.Column="1" HorizontalAlignment="Left" Margin="30,5,0,0"  VerticalAlignment="Top" Width="100" Height="25" Click="Button_Click"/>
-        <Button Content="Остановить" Name="Stop" Grid.Column="1" HorizontalAlignment="Left" Margin="150,5,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="Button_Click_1"/>
+        <Button Content="Выполнить"  Name="Run"  Grid.Column="1" HorizontalAlignment="Left" Margin="30,5,0,0"  VerticalAlignment="Top" Width="100" Height="25" Command="Play"/>
+        <Button Content="Остановить" Name="Stop" Grid.Column="1" HorizontalAlignment="Left" Margin="150,5,0,0" VerticalAlignment="Top" Width="100" Height="25" Command="Stop"/>
         <Button Content="Сохранить"  Name="Save" Grid.Column="1" HorizontalAlignment="Left" Margin="270,5,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="Save_Click"/>
 
-        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Grid.Column="1" Height="23" Margin="400,6,23,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                 Grid.Column="1" Height="23" Margin="400,6,23,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
 
-        <Border BorderThickness="1" BorderBrush="#FF17AD1A" Grid.Column="1" Grid.Row="1">
+        <Border BorderThickness="1" BorderBrush="#FF17AD1A" Grid.Column="1" Grid.Row="1" Margin="0,0,0,5">
             <avalonedit:TextEditor Name="teCode" FontFamily="Consolas" Text="{Binding Lua, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </Border>
 

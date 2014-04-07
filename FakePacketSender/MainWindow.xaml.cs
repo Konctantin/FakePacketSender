@@ -5,7 +5,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Xml.Serialization;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using NLua;
 
@@ -18,6 +20,7 @@ namespace FakePacketSender
     {
         private ObservableCollection<Script> scriptList = new ObservableCollection<Script>();
 
+        private Thread taskThread;
         private Lua lua = new Lua();
         public MainWindow()
         {
@@ -85,33 +88,12 @@ namespace FakePacketSender
             Application.Current.Shutdown(0);
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var code = teCode.Text; 
-            await Task.Run(() => {
-                try
-                {
-                    lua.DoString(code);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            });
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void CommandBinding_New_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        private void CommandBinding_New_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             scriptList.Add(new Script { Name = "<new>", Lua = "-- local packet = CreateFakePacket(0);" });
         }
 
-        private void CommandBinding_Delete_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        private void CommandBinding_Delete_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (lbScripts.SelectedIndex > -1)
             {
@@ -124,6 +106,41 @@ namespace FakePacketSender
             using (var file = File.Open(Path.Combine(App.StartupPath, "sctipts.xml"), FileMode.Create))
                 new XmlSerializer(typeof(ObservableCollection<Script>)).Serialize(file, scriptList);
             Console.WriteLine("Сохранено!");
+        }
+
+        private void CommandBinding_Play_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            teLog.Clear();
+            var code = teCode.Text;
+            Task.Run(() =>
+            {
+                taskThread = Thread.CurrentThread;
+                try
+                {
+                    lua.DoString(code);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            });
+        }
+
+        private void CommandBinding_Stop_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (taskThread != null)
+                taskThread.Abort();
+            taskThread = null;
+        }
+
+        private void CommandBinding_Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = taskThread == null;
+        }
+
+        private void CommandBinding_Stop_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = taskThread != null;
         }
     }
 }
