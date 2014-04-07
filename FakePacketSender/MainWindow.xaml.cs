@@ -43,6 +43,7 @@ namespace FakePacketSender
                     new WowApi() { Name = "WriteBytes",       Signature = ":WriteBytes(...)",  Description = "Записывает в пакет последовательность байт.", ImageType = ImageType.Method },
                     new WowApi() { Name = "Clear",            Signature = ":Clear()",  Description = "Очищает пакет от данных.", ImageType = ImageType.Method },
                     new WowApi() { Name = "Send",             Signature = ":Send()",  Description = "Отправляет данный пакет серверу.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "Dump",             Signature = "dump = packet:Dump()",  Description = "Возвращает дамп пакета в виде %02Х.", ImageType = ImageType.Method },
                     new WowApi() { Name = "sleep",            Signature = "sleep(ms)",  Description = "Приостанавливает работу потока на указанное количество милисекунд.", ImageType = ImageType.Method },
                 };
 

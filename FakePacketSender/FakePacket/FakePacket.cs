@@ -68,14 +68,17 @@ namespace FakePacketSender.FakePacket
             this.Buffer.AddRange(bytes);
         }
 
+        public string Dump()
+        {
+            return string.Join(" ", this.Buffer.Select(n => n.ToString("X02")));
+        }
+
         public unsafe void Send()
         {
             var byteBuffer = this.Buffer.ToArray();
             fixed (byte* bytes = byteBuffer)
             {
                 var packet = new CDataStore((void*)vTable, bytes, this.Buffer.Count);
-
-                Debug.WriteLine(string.Join(" ", this.Buffer.Select(n => n.ToString("X02"))));
 
                 var packetLen = Marshal.SizeOf(typeof(CDataStore));
                 var packetPtr = Marshal.AllocHGlobal(packetLen);
