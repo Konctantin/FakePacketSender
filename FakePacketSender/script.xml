@@ -1,0 +1,23 @@
+﻿<?xml version="1.0"?>
+<ArrayOfScript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Script Name="CMSG_CREATURE_QUERY">
+        <Lua>
+            <![CDATA[
+-- 18019
+local packet = CreateFakePacket(0x1E72);
+print("Start CMSG_CREATURE_QUERY");
+for i = 1, 70000 do
+    packet:Clear();
+    packet:WriteInt32(i);
+    packet:Send();
+    if ((i % 100) == 0) then
+        print(string.format("Send Entry: %d, Dump: %s", i, packet:Dump()));
+    end
+    sleep(50);
+end
+
+print("Done!");
+]]>
+        </Lua>
+    </Script>
+</ArrayOfScript>
