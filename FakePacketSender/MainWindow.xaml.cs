@@ -27,7 +27,7 @@ namespace FakePacketSender
 
             try
             {
-                App.Offsets = new Offsets() { Send2 = 0x1090, VTable = 0 };
+                App.Offsets = new Offsets() { Send2 = 0x8F9A, VTable = 0x9298F0 };
 
                 RegisterFunctions();
 
@@ -39,8 +39,8 @@ namespace FakePacketSender
                     new WowApi() { Name = "WriteFloat",       Signature = ":WriteFloat(value)",  Description = "Записывает в пакет значение типа float.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteBytes",       Signature = ":WriteBytes(...)",  Description = "Записывает в пакет последовательность байт.", ImageType = ImageType.Method },
                     new WowApi() { Name = "Clear",            Signature = ":Clear()",  Description = "Очищает пакет от данных.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "Send",             Signature = ":Send()",   Description = "Отправляет данный пакет серверу.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "sleep",            Signature = "sleep(ms)", Description="Приостанавливает поток на указанное количество милисекунд.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "Send",             Signature = ":Send()",  Description = "Отправляет данный пакет серверу.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "sleep",            Signature = "sleep(ms)",  Description = "Приостанавливает работу потока на указанное количество милисекунд.", ImageType = ImageType.Method },
                 };
 
                 if (File.Exists(Path.Combine(App.StartupPath, "sctipts.xml")))
@@ -103,7 +103,7 @@ namespace FakePacketSender
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            // todo
+
         }
 
         private void CommandBinding_New_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)

@@ -11,7 +11,7 @@ namespace FakePacketSender.FakePacket
     public class FakePacket
         : BitStreamWriter
     {
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         delegate uint Send2(IntPtr packet);
 
         public int Opcode { get; private set; }
@@ -73,7 +73,7 @@ namespace FakePacketSender.FakePacket
             var byteBuffer = this.Buffer.ToArray();
             fixed (byte* bytes = byteBuffer)
             {
-                var packet = new CDataStore((void*)this.vTable, bytes, this.Buffer.Count);
+                var packet = new CDataStore((void*)vTable, bytes, this.Buffer.Count);
 
                 Debug.WriteLine(string.Join(" ", this.Buffer.Select(n => n.ToString("X02"))));
 
