@@ -80,6 +80,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FakePacket\Extensions.cs" />
     <Compile Include="Offsets.cs" />
     <Compile Include="Script.cs" />
     <Compile Include="SelectProcessDialog.xaml.cs">

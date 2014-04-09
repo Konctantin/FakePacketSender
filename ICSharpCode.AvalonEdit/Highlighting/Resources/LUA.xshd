@@ -215,10 +215,6 @@
       <Word>foreachi</Word>
       <Word>bit</Word>
       <Word>bit</Word>
-      <Word>band</Word>
-      <Word>bor</Word>
-      <Word>bnot</Word>
-      <Word>bxor</Word>
     </Keywords>
 
     <Rule color="Number">
@@ -240,6 +236,12 @@
       <Word>Send</Word>
       <Word>Dump</Word>
       <Word>sleep</Word>
+      <Word>bor</Word>
+      <Word>bxor</Word>
+      <Word>band</Word>
+      <Word>bnot</Word>
+      <Word>blsh</Word>
+      <Word>brsh</Word>
     </Keywords>
 
     <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>

@@ -45,6 +45,13 @@ namespace FakePacketSender
                     new WowApi() { Name = "Send",             Signature = ":Send()",  Description = "Отправляет данный пакет серверу.", ImageType = ImageType.Method },
                     new WowApi() { Name = "Dump",             Signature = "dump = packet:Dump()",  Description = "Возвращает дамп пакета в виде %02Х.", ImageType = ImageType.Method },
                     new WowApi() { Name = "sleep",            Signature = "sleep(ms)",  Description = "Приостанавливает работу потока на указанное количество милисекунд.", ImageType = ImageType.Method },
+
+                    new WowApi() { Name = "bor",             Signature = "val = bor(lval, rval)",   Description = "val = lval | rval",  ImageType = ImageType.Method },
+                    new WowApi() { Name = "bxor",            Signature = "val = bxor(lval, rval)",  Description = "val = lval ^ rval",  ImageType = ImageType.Method },
+                    new WowApi() { Name = "band",            Signature = "val = band(lval, rval)",  Description = "val = lval & rval",  ImageType = ImageType.Method },
+                    new WowApi() { Name = "bnot",            Signature = "val = bnot(lval, rval)",  Description = "val = lval & ~rval", ImageType = ImageType.Method },
+                    new WowApi() { Name = "blsh",            Signature = "val = blsh(lval, rval)",  Description = "val = lval << rval", ImageType = ImageType.Method },
+                    new WowApi() { Name = "brsh",            Signature = "val = brsh(lval, rval)",  Description = "val = lval >> rval", ImageType = ImageType.Method },
                 };
 
                 if (File.Exists(Path.Combine(App.StartupPath, "sctipts.xml")))
@@ -76,6 +83,13 @@ namespace FakePacketSender
 
             lua.RegisterFunction("CreateFakePacket", typeof(FakePacket.FakePacket)
                 .GetMethod("CreateFakePacket", new Type[] { typeof(int) }));
+
+            lua.RegisterFunction("bor",  typeof(FakePacket.Extensions).GetMethod("Bit_Or"));
+            lua.RegisterFunction("bxor", typeof(FakePacket.Extensions).GetMethod("Bit_Xor"));
+            lua.RegisterFunction("band", typeof(FakePacket.Extensions).GetMethod("Bit_And"));
+            lua.RegisterFunction("bnot", typeof(FakePacket.Extensions).GetMethod("Bit_Not"));
+            lua.RegisterFunction("blsh", typeof(FakePacket.Extensions).GetMethod("Bit_Lsh"));
+            lua.RegisterFunction("brsh", typeof(FakePacket.Extensions).GetMethod("Bit_Rsh"));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
