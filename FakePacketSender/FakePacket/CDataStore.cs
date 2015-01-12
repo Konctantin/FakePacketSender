@@ -16,9 +16,9 @@ namespace FakePacketSender.FakePacket
         public int size;
         public int read;
 
-        public CDataStore(void* vTable, byte* buffer, int size)
+        public CDataStore(byte* buffer, int size)
         {
-            this.vTable = vTable;
+            this.vTable = null;
             this.Buffer = buffer;
             this.mBase  = 0;
             this.alloc  = -1;

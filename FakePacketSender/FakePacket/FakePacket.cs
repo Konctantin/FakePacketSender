@@ -11,13 +11,16 @@ namespace FakePacketSender.FakePacket
     public class FakePacket
         : BitStreamWriter
     {
+        public static int Send2Addr = 0;
+
+        // ClientConnection::Send(CDataStore*);
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         delegate uint Send2(IntPtr packet);
 
         public int Opcode { get; private set; }
+
         private Process Process;
         private Send2 Send2Func;
-        private IntPtr vTable;
 
         public FakePacket(int opcode)
             : base()
@@ -29,13 +32,11 @@ namespace FakePacketSender.FakePacket
             this.Process = Process.GetCurrentProcess();
 
             this.Send2Func = Marshal.GetDelegateForFunctionPointer(
-                IntPtr.Add(Process.MainModule.BaseAddress, App.Offsets.Send2),
+                IntPtr.Add(Process.MainModule.BaseAddress, Send2Addr),
                 typeof(Send2)) as Send2;
 
             if (Send2Func == null)
                 throw new Exception("Can't create delegate \"Send2\"!");
-
-            vTable = IntPtr.Add(Process.MainModule.BaseAddress, App.Offsets.VTable);
         }
 
         public void Clear()
@@ -78,10 +79,11 @@ namespace FakePacketSender.FakePacket
             var byteBuffer = this.Buffer.ToArray();
             fixed (byte* bytes = byteBuffer)
             {
-                var packet = new CDataStore((void*)vTable, bytes, this.Buffer.Count);
+                var packet = new CDataStore(bytes, byteBuffer.Length);
 
                 var packetLen = Marshal.SizeOf(typeof(CDataStore));
                 var packetPtr = Marshal.AllocHGlobal(packetLen);
+
                 Marshal.StructureToPtr(packet, packetPtr, true);
 
                 try
