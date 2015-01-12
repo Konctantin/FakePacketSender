@@ -81,7 +81,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="FakePacket\Extensions.cs" />
-    <Compile Include="Offsets.cs" />
     <Compile Include="Script.cs" />
     <Compile Include="SelectProcessDialog.xaml.cs">
       <DependentUpon>SelectProcessDialog.xaml</DependentUpon>
@@ -134,7 +133,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
@@ -150,13 +149,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="offsets.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="script.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

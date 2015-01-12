@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
-using ICSharpCode.AvalonEdit;
+using FakePacketSender.Properties;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using NLua;
 
@@ -30,12 +31,14 @@ namespace FakePacketSender
 
             try
             {
-                App.Offsets = new Offsets() { Send2 = 0x8F9A, VTable = 0x9298F0 };
+                tbSend2.Text = "0x" + Settings.Default.Send2.ToString("X");
+                FakePacket.FakePacket.Send2Addr = Settings.Default.Send2;
+
+                Console.WriteLine("Send2 address: 0x{0:X}", FakePacket.FakePacket.Send2Addr);
 
                 RegisterFunctions();
 
-                IntelliSienceManager.IntelliSienceCollection = new List<WowApi>()
-                {
+                IntelliSienceManager.IntelliSienceCollection = new List<WowApi>() {
                     new WowApi() { Name = "CreateFakePacket", Signature = "packet = CreateFakePaket(opcode)",  Description = "Создает новый пакет для отправки серверу.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteBits",        Signature = ":WriteBits(value, bitcount)",  Description = "Записывает в пакет значение типа uint с указанным количеством бит.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteInt32",       Signature = ":WriteInt32(value)",  Description = "Записывает в пакет значение типа int.", ImageType = ImageType.Method },
@@ -120,6 +123,11 @@ namespace FakePacketSender
         {
             using (var file = File.Open(Path.Combine(App.StartupPath, "sctipts.xml"), FileMode.Create))
                 new XmlSerializer(typeof(ObservableCollection<Script>)).Serialize(file, scriptList);
+
+            int offset = 0;
+            if (int.TryParse(tbSend2.Text.Substring(2), NumberStyles.AllowHexSpecifier, null, out offset))
+                Settings.Default.Send2 = offset;
+            FakePacketSender.Properties.Settings.Default.Save();
             Console.WriteLine("Сохранено!");
         }
 
@@ -150,12 +158,12 @@ namespace FakePacketSender
 
         private void CommandBinding_Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = taskThread == null;
+            e.CanExecute = (taskThread == null) || (taskThread.ThreadState != System.Threading.ThreadState.Running);
         }
 
         private void CommandBinding_Stop_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = taskThread != null;
+            e.CanExecute = (taskThread != null) && (taskThread.ThreadState == System.Threading.ThreadState.Running);
         }
     }
 }

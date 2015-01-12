@@ -10,7 +10,6 @@ namespace FakePacketSender
     /// </summary>
     public partial class App : Application
     {
-        public static Offsets Offsets { get; set; }
         public static string StartupPath { get; set; } 
         protected override void OnStartup(StartupEventArgs e)
         {
