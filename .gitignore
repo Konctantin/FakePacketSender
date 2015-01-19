@@ -29,6 +29,7 @@ bin/*
 *.ilk
 *.idb
 *.ipch
+*.tlh
 
 *.sdf
 *.opensdf

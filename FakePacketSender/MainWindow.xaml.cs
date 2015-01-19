@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
-using FakePacketSender.Properties;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using NLua;
 
@@ -31,11 +31,6 @@ namespace FakePacketSender
 
             try
             {
-                tbSend2.Text = "0x" + Settings.Default.Send2.ToString("X");
-                FakePacket.FakePacket.Send2Addr = Settings.Default.Send2;
-
-                Console.WriteLine("Send2 address: 0x{0:X}", FakePacket.FakePacket.Send2Addr);
-
                 RegisterFunctions();
 
                 IntelliSienceManager.IntelliSienceCollection = new List<WowApi>() {
@@ -85,14 +80,16 @@ namespace FakePacketSender
                 .GetMethod("Sleep", new Type[] { typeof(int) }));
 
             lua.RegisterFunction("CreateFakePacket", typeof(FakePacket.FakePacket)
-                .GetMethod("CreateFakePacket", new Type[] { typeof(int) }));
+                // CreateFakePacket(sendOffset, opcode);
+                .GetMethod("CreateFakePacket", new Type[] { typeof(int), typeof(int) }));
 
-            lua.RegisterFunction("bor",  typeof(FakePacket.Extensions).GetMethod("Bit_Or"));
-            lua.RegisterFunction("bxor", typeof(FakePacket.Extensions).GetMethod("Bit_Xor"));
-            lua.RegisterFunction("band", typeof(FakePacket.Extensions).GetMethod("Bit_And"));
-            lua.RegisterFunction("bnot", typeof(FakePacket.Extensions).GetMethod("Bit_Not"));
-            lua.RegisterFunction("blsh", typeof(FakePacket.Extensions).GetMethod("Bit_Lsh"));
-            lua.RegisterFunction("brsh", typeof(FakePacket.Extensions).GetMethod("Bit_Rsh"));
+            var type = typeof(FakePacket.Extensions);
+            lua.RegisterFunction("bor",  type.GetMethod("Bit_Or"));
+            lua.RegisterFunction("bxor", type.GetMethod("Bit_Xor"));
+            lua.RegisterFunction("band", type.GetMethod("Bit_And"));
+            lua.RegisterFunction("bnot", type.GetMethod("Bit_Not"));
+            lua.RegisterFunction("blsh", type.GetMethod("Bit_Lsh"));
+            lua.RegisterFunction("brsh", type.GetMethod("Bit_Rsh"));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -108,7 +105,22 @@ namespace FakePacketSender
 
         private void CommandBinding_New_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            scriptList.Add(new Script { Name = "<new>", Lua = "-- local packet = CreateFakePacket(0);" });
+            var content = new StringBuilder();
+            content.AppendLine("local sendOffset = 0x0; -- address of function ClientConnection::Send(CDataStore*)");
+            content.AppendLine("local opcode = 0; -- Client message id");
+            content.AppendLine("local packet = CreateFakePacket(sendOffset, opcode);");
+            content.AppendLine("for i = 1, 1000 do");
+            content.AppendLine("    packet.Clear();");
+            content.AppendLine("    -- write packet data;");
+            content.AppendLine("    print(\"Packet:\", packet.Dump());");
+            content.AppendLine("    packet.Send();");
+            content.AppendLine("    sleep(50);");
+            content.AppendLine("end");
+
+            scriptList.Add(new Script {
+                Name = "<new>",
+                Lua = content.ToString()
+            });
         }
 
         private void CommandBinding_Delete_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -123,11 +135,6 @@ namespace FakePacketSender
         {
             using (var file = File.Open(Path.Combine(App.StartupPath, "sctipts.xml"), FileMode.Create))
                 new XmlSerializer(typeof(ObservableCollection<Script>)).Serialize(file, scriptList);
-
-            int offset = 0;
-            if (int.TryParse(tbSend2.Text.Substring(2), NumberStyles.AllowHexSpecifier, null, out offset))
-                Settings.Default.Send2 = offset;
-            FakePacketSender.Properties.Settings.Default.Save();
             Console.WriteLine("Сохранено!");
         }
 

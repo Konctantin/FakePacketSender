@@ -11,8 +11,6 @@ namespace FakePacketSender.FakePacket
     public class FakePacket
         : BitStreamWriter
     {
-        public static int Send2Addr = 0;
-
         // ClientConnection::Send(CDataStore*);
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         delegate uint Send2(IntPtr packet);
@@ -22,21 +20,27 @@ namespace FakePacketSender.FakePacket
         private Process Process;
         private Send2 Send2Func;
 
-        public FakePacket(int opcode)
+        public FakePacket(int sendFunctionOffset, int opcode)
             : base()
         {
-            this.Opcode = opcode;
-            this.WriteInt32(this.Opcode);
+            if (sendFunctionOffset == 0)
+                throw new ArgumentNullException("Send function offset is empty!");
 
-            //init delegates
+            if (opcode == 0)
+                throw new ArgumentNullException("Opcode must be not 0!");
+
             this.Process = Process.GetCurrentProcess();
 
             this.Send2Func = Marshal.GetDelegateForFunctionPointer(
-                IntPtr.Add(Process.MainModule.BaseAddress, Send2Addr),
+                IntPtr.Add(Process.MainModule.BaseAddress, sendFunctionOffset),
                 typeof(Send2)) as Send2;
 
             if (Send2Func == null)
                 throw new Exception("Can't create delegate \"Send2\"!");
+
+            this.Opcode = opcode;
+
+            this.Clear();
         }
 
         public void Clear()
@@ -101,9 +105,9 @@ namespace FakePacketSender.FakePacket
             }
         }
 
-        public static FakePacket CreateFakePacket(int opcode)
+        public static FakePacket CreateFakePacket(int sendFunctionOffset, int opcode)
         {
-            return new FakePacket(opcode);
+            return new FakePacket(sendFunctionOffset, opcode);
         }
     }
 }

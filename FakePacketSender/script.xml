@@ -3,8 +3,9 @@
     <Script Name="CMSG_CREATURE_QUERY">
         <Lua>
             <![CDATA[
--- 19116
-local packet = CreateFakePacket(0x0505);
+local sendOffset = 0x69D0;
+local CMSG_CREATURE_QUERY = 0x0505;
+local packet = CreateFakePacket(sendOffset, CMSG_CREATURE_QUERY);
 print("Start CMSG_CREATURE_QUERY");
 for i = 1, 100000 do
     packet:Clear();
@@ -17,6 +18,31 @@ for i = 1, 100000 do
 end
 
 print("Done!");
+]]>
+        </Lua>
+    </Script>
+    <Script Name="CMSG_QUEST_POI_QUERY">
+        <Lua>
+            <![CDATA[
+local sendOffset = 0x69D0;
+local CMSG_QUEST_POI_QUERY = 0x0BD9;
+
+local packet = CreateFakePacket(sendOffset, CMSG_QUEST_POI_QUERY);
+local entry = 1;
+
+print("Start CMSG_QUEST_POI_QUERY");
+while entry < 50000 do
+    local count = math.random(10, 20);
+    packet:Clear();
+    packet:WriteInt32(count);
+    for i = 1, count do
+        packet.WriteInt32(entry);
+        entry = entry + 1;
+    end
+    packet:Send();
+    print("Packet:", packet:Dump());
+    sleep(50);
+end
 ]]>
         </Lua>
     </Script>
