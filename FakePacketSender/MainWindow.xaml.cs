@@ -173,12 +173,22 @@ namespace FakePacketSender
 
         private void CommandBinding_Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (taskThread == null) || (taskThread.ThreadState != System.Threading.ThreadState.Running);
+            if (taskThread == null)
+                e.CanExecute = true;
+            else if ((taskThread.ThreadState & (ThreadState.Running | ThreadState.Background)) == 0)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
         }
 
         private void CommandBinding_Stop_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (taskThread != null) && (taskThread.ThreadState == System.Threading.ThreadState.Running);
+            if (taskThread == null)
+                e.CanExecute = false;
+            else if ((taskThread.ThreadState & (ThreadState.Running | ThreadState.Background)) != 0)
+                e.CanExecute = true;
+            else
+                e.CanExecute = false;
         }
     }
 }
