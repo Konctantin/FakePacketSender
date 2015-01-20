@@ -19,22 +19,29 @@ namespace FakePacketSender
     /// </summary>
     public partial class MainWindow : Window
     {
+        const string fileName = "scripts.xml";
         private ObservableCollection<Script> scriptList = new ObservableCollection<Script>();
 
         private Thread taskThread;
         private Lua lua = new Lua();
+
+        private readonly string fullFileName;
+
         public MainWindow()
         {
             InitializeComponent();
 
             ConsoleWriter.Initialize(Path.Combine(App.StartupPath, "log.log"), teLog, true);
+            fullFileName = Path.Combine(App.StartupPath, fileName);
 
             try
             {
+                Console.WriteLine("StartUp: " + App.StartupPath);
+
                 RegisterFunctions();
 
                 IntelliSienceManager.IntelliSienceCollection = new List<WowApi>() {
-                    new WowApi() { Name = "CreateFakePacket", Signature = "packet = CreateFakePaket(opcode)",  Description = "Создает новый пакет для отправки серверу.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "CreateFakePacket", Signature = "packet = CreateFakePaket(sendOffset, opcode)",  Description = "Создает новый пакет для отправки серверу.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteBits",        Signature = ":WriteBits(value, bitcount)",  Description = "Записывает в пакет значение типа uint с указанным количеством бит.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteInt32",       Signature = ":WriteInt32(value)",  Description = "Записывает в пакет значение типа int.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteFloat",       Signature = ":WriteFloat(value)",  Description = "Записывает в пакет значение типа float.", ImageType = ImageType.Method },
@@ -52,11 +59,12 @@ namespace FakePacketSender
                     new WowApi() { Name = "brsh",            Signature = "val = brsh(lval, rval)",  Description = "val = lval >> rval", ImageType = ImageType.Method },
                 };
 
-                if (File.Exists(Path.Combine(App.StartupPath, "sctipts.xml")))
+                if (File.Exists(fullFileName))
                 {
-                    using (var file = File.Open(Path.Combine(App.StartupPath, "sctipts.xml"), FileMode.Open))
+                    using (var file = File.Open(fullFileName, FileMode.Open))
                     {
                         scriptList = (ObservableCollection<Script>)new XmlSerializer(typeof(ObservableCollection<Script>)).Deserialize(file);
+                        Console.WriteLine("ScriptCount: " + scriptList.Count);
                     }
                 }
                 else
@@ -110,10 +118,10 @@ namespace FakePacketSender
             content.AppendLine("local opcode = 0; -- Client message id");
             content.AppendLine("local packet = CreateFakePacket(sendOffset, opcode);");
             content.AppendLine("for i = 1, 1000 do");
-            content.AppendLine("    packet.Clear();");
+            content.AppendLine("    packet:Clear();");
             content.AppendLine("    -- write packet data;");
-            content.AppendLine("    print(\"Packet:\", packet.Dump());");
-            content.AppendLine("    packet.Send();");
+            content.AppendLine("    print(\"Packet:\", packet:Dump());");
+            content.AppendLine("    packet:Send();");
             content.AppendLine("    sleep(50);");
             content.AppendLine("end");
 
@@ -133,7 +141,7 @@ namespace FakePacketSender
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            using (var file = File.Open(Path.Combine(App.StartupPath, "sctipts.xml"), FileMode.Create))
+            using (var file = File.Open(fullFileName, FileMode.Create))
                 new XmlSerializer(typeof(ObservableCollection<Script>)).Serialize(file, scriptList);
             Console.WriteLine("Сохранено!");
         }

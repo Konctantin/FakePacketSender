@@ -22,12 +22,12 @@
             <ColumnDefinition Width="416*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="65"/>
-            <RowDefinition Height="179*"/>
-            <RowDefinition Height="126*"/>
+            <RowDefinition Height="38"/>
+            <RowDefinition Height="103*"/>
+            <RowDefinition Height="63*"/>
         </Grid.RowDefinitions>
 
-        <ListBox Margin="0,0,5,0" Grid.RowSpan="3" Name="lbScripts" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" DisplayMemberPath="Name" Style="{DynamicResource ListBoxStyle1}">
+        <ListBox Margin="0,0,5,0" Grid.RowSpan="3" Name="lbScripts" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" DisplayMemberPath="Name">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Command="New" Header="Создать"/>
@@ -38,12 +38,12 @@
         <GridSplitter Grid.RowSpan="3" Width="5"/>
         <GridSplitter Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="5"/>
 
-        <Button Content="Выполнить"  Name="Run"  Grid.Column="1" HorizontalAlignment="Left" Margin="30,5,0,0"  VerticalAlignment="Top" Width="100" Height="25" Command="Play"/>
-        <Button Content="Остановить" Name="Stop" Grid.Column="1" HorizontalAlignment="Left" Margin="30,32,0,0" VerticalAlignment="Top" Width="100" Height="25" Command="Stop"/>
-        <Button Content="Сохранить"  Name="Save" Grid.Column="1" HorizontalAlignment="Left" Margin="152,5,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="Save_Click"/>
+        <Button Content="Выполнить"  Name="Run"  Grid.Column="1" HorizontalAlignment="Left" Margin="10,5,0,0"  VerticalAlignment="Top" Width="100" Height="25" Command="Play"/>
+        <Button Content="Остановить" Name="Stop" Grid.Column="1" HorizontalAlignment="Left" Margin="115,5,0,0" VerticalAlignment="Top" Width="100" Height="25" Command="Stop"/>
+        <Button Content="Сохранить"  Name="Save" Grid.Column="1" HorizontalAlignment="Left" Margin="221,5,0,0" VerticalAlignment="Top" Width="100" Height="25" Click="Save_Click"/>
 
         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                 Grid.Column="1" Height="23" Margin="369,7,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                 Grid.Column="1" Height="23" Margin="411,7,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
 
         <Border BorderThickness="1" BorderBrush="#FF17AD1A" Grid.Column="1" Grid.Row="1" Margin="0,0,0,5">
             <avalonedit:TextEditor Name="teCode" FontFamily="Consolas" Text="{Binding Lua, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -52,8 +52,6 @@
         <Border BorderThickness="1" BorderBrush="#FF17AD1A" Grid.Column="1" Grid.Row="2">
             <TextBox Name="teLog" FontFamily="Consolas" ScrollViewer.VerticalScrollBarVisibility="Visible" />
         </Border>
-        <TextBox x:Name="tbSend2" Grid.Column="1" Height="23" Margin="369,32,10,0" TextWrapping="Wrap" VerticalAlignment="Top" IsReadOnly="True"/>
-        <Label Content="Script name: " Grid.Column="1" HorizontalAlignment="Left" Margin="288,10,0,0" VerticalAlignment="Top" Width="81"/>
-        <Label Content="Send2 offset: " Grid.Column="1" HorizontalAlignment="Left" Margin="288,29,0,0" VerticalAlignment="Top" Width="81"/>
+        <Label Content="Script name: " Grid.Column="1" HorizontalAlignment="Left" Margin="326,5,0,0" VerticalAlignment="Top" Width="81" Height="26"/>
     </Grid>
 </Window>

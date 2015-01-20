@@ -36,13 +36,16 @@ while entry < 50000 do
     packet:Clear();
     packet:WriteInt32(count);
     for i = 1, count do
-        packet.WriteInt32(entry);
+        packet:WriteInt32(entry);
         entry = entry + 1;
     end
     packet:Send();
-    print("Packet:", packet:Dump());
+    print("Send query for "..tostring(count).." quests, entry: "..tostring(entry));
+    --print("Packet:", packet:Dump());
     sleep(50);
 end
+
+print("Done!");
 ]]>
         </Lua>
     </Script>
