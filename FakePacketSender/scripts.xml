@@ -7,16 +7,17 @@ local sendOffset = 0x69D0;
 local CMSG_CREATURE_QUERY = 0x0505;
 local packet = CreateFakePacket(sendOffset, CMSG_CREATURE_QUERY);
 print("Start CMSG_CREATURE_QUERY");
-for i = 1, 100000 do
-    packet:Clear();
-    packet:WriteInt32(i);
-    packet:Send();
-    if ((i % 100) == 0) then
-        print(string.format("Send Entry: %d, Dump: %s", i, packet:Dump()));
+local entry = 1;
+while entry < 100000 do
+    for i = 1, math.random(10,20) do
+        packet:Clear();
+        packet:WriteInt32(entry);
+        packet:Send();
+        entry = entry + 1;
     end
-    sleep(50);
+    print(string.format("Send Entry: %d, Dump: %s", entry, packet:Dump()));
+    sleep(100);
 end
-
 print("Done!");
 ]]>
         </Lua>
