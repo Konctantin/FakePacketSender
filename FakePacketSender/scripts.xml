@@ -1,0 +1,71 @@
+﻿<?xml version="1.0"?>
+<ArrayOfScript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Script Name="CMSG_CREATURE_QUERY">
+        <Lua>
+            <![CDATA[
+local sendOffset = 0x69D0;
+local CMSG_CREATURE_QUERY = 0x0505;
+local packet = CreateFakePacket(sendOffset, CMSG_CREATURE_QUERY);
+print("Start CMSG_CREATURE_QUERY");
+local entry = 1;
+while entry < 100000 do
+    for i = 1, math.random(10,20) do
+        packet:Clear();
+        packet:WriteInt32(entry);
+        packet:Send();
+        entry = entry + 1;
+    end
+    print(string.format("Send Entry: %d, Dump: %s", entry, packet:Dump()));
+    sleep(100);
+end
+print("Done!");
+]]>
+        </Lua>
+    </Script>
+    <Script Name="CMSG_QUEST_POI_QUERY">
+        <Lua>
+            <![CDATA[
+local sendOffset = 0x69D0;
+
+local CMSG_QUEST_NPC_QUERY = 0x0B81;
+local CMSG_QUEST_POI_QUERY = 0x0BD9;
+
+local entry = 1;
+print("Start CMSG_QUEST_POI_QUERY");
+
+local packetNPC = CreateFakePacket(sendOffset, CMSG_QUEST_NPC_QUERY);
+local packetPOI = CreateFakePacket(sendOffset, CMSG_QUEST_POI_QUERY);
+
+while entry < 50000 do
+    local count = math.random(10,20);
+
+    packetNPC:Clear();
+    packetPOI:Clear();
+
+    packetNPC:WriteInt32(count);
+    packetPOI:WriteInt32(count);
+
+    for i = 1, count do
+        packetPOI:WriteInt32(entry);
+        packetNPC:WriteInt32(entry);
+        entry = entry + 1;
+    end
+
+    for i = count+1, 50 do
+        packetNPC:WriteInt32(0);
+    end
+
+    packetNPC:Send();
+    sleep(25);
+    packetPOI:Send();
+
+    print("Send query for "..tostring(count).." quests, entry: "..tostring(entry));
+    --print("Packet:", packet:Dump());
+    sleep(100);
+end
+
+print("Done!");
+]]>
+        </Lua>
+    </Script>
+</ArrayOfScript>

@@ -1,0 +1,11 @@
+﻿<Window x:Class="FakePacketSender.SelectProcessDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Style="{StaticResource KamillaStyle}"
+        Title="SelectProcessDialog" Height="61" Width="265" ResizeMode="NoResize">
+    <StackPanel Orientation="Horizontal">
+        <TextBlock Width="50" Text="Process: " VerticalAlignment="Center"/>
+        <ComboBox Width="150" Name="cbProcess"/>
+        <Button Width="50" Content="Select" Click="Button_Click"/>
+    </StackPanel>
+</Window>
