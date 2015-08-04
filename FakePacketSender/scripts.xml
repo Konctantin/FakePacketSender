@@ -3,7 +3,8 @@
     <Script Name="CMSG_CREATURE_QUERY">
         <Lua>
             <![CDATA[
-local sendOffset = 0x6DDF;
+-- Build 20338
+local sendOffset = 0x6DC1;
 local CMSG_CREATURE_QUERY = 0x1408;
 local packet = CreateFakePacket(sendOffset, CMSG_CREATURE_QUERY);
 print("Start CMSG_CREATURE_QUERY");
@@ -25,7 +26,8 @@ print("Done!");
     <Script Name="CMSG_QUEST_POI_QUERY">
         <Lua>
             <![CDATA[
-local sendOffset = 0x6DDF;
+-- Build 20338
+local sendOffset = 0x6DC1;
 local CMSG_QUEST_POI_QUERY = 0x05B5;
 local entry = 1;
 
