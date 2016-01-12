@@ -26,10 +26,10 @@ print("Done!");
     <Script Name="CMSG_QUEST_POI_QUERY">
         <Lua>
             <![CDATA[
--- Build 20444
-local sendOffset = 0x6DFC;
-local CMSG_QUERY_QUEST_COMPLETION_NPCS=0x0592;
-local CMSG_QUEST_POI_QUERY = 0x082A;
+-- Build 20886
+local sendOffset = 0x6E10;
+local CMSG_QUERY_QUEST_COMPLETION_NPCS=0x04E9;
+local CMSG_QUEST_POI_QUERY = 0x04AF;
 
 local entry = 1;
 print("Start CMSG_QUEST_POI_QUERY");
