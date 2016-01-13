@@ -3,8 +3,9 @@
     <Script Name="CMSG_CREATURE_QUERY">
         <Lua>
             <![CDATA[
-local sendOffset = 0x69D0;
-local CMSG_CREATURE_QUERY = 0x0505;
+-- Build 20886
+local sendOffset = 0x6E10;
+local CMSG_CREATURE_QUERY = 0x1002;
 local packet = CreateFakePacket(sendOffset, CMSG_CREATURE_QUERY);
 print("Start CMSG_CREATURE_QUERY");
 local entry = 1;
@@ -25,15 +26,15 @@ print("Done!");
     <Script Name="CMSG_QUEST_POI_QUERY">
         <Lua>
             <![CDATA[
-local sendOffset = 0x69D0;
-
-local CMSG_QUEST_NPC_QUERY = 0x0B81;
-local CMSG_QUEST_POI_QUERY = 0x0BD9;
+-- Build 20886
+local sendOffset = 0x6E10;
+local CMSG_QUERY_QUEST_COMPLETION_NPCS=0x04E9;
+local CMSG_QUEST_POI_QUERY = 0x04AF;
 
 local entry = 1;
 print("Start CMSG_QUEST_POI_QUERY");
 
-local packetNPC = CreateFakePacket(sendOffset, CMSG_QUEST_NPC_QUERY);
+local packetNPC = CreateFakePacket(sendOffset, CMSG_QUERY_QUEST_COMPLETION_NPCS);
 local packetPOI = CreateFakePacket(sendOffset, CMSG_QUEST_POI_QUERY);
 
 while entry < 50000 do
@@ -43,7 +44,6 @@ while entry < 50000 do
     packetPOI:Clear();
 
     packetNPC:WriteInt32(count);
-    packetPOI:WriteInt32(count);
 
     for i = 1, count do
         packetPOI:WriteInt32(entry);
@@ -52,7 +52,7 @@ while entry < 50000 do
     end
 
     for i = count+1, 50 do
-        packetNPC:WriteInt32(0);
+        packetPOI:WriteInt32(0);
     end
 
     packetNPC:Send();

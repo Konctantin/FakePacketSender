@@ -11,7 +11,7 @@ namespace FakePacketSender.FakePacket
     public class FakePacket
         : BitStreamWriter
     {
-        // ClientConnection::Send(CDataStore*);
+        // DWORD __stdcall ClientConnection::Send(CDataStore*);
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         delegate uint Send2(IntPtr packet);
 
