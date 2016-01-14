@@ -21,7 +21,6 @@ namespace FakePacketSender.FakePacket
         private Send2 Send2Func;
 
         public FakePacket(int sendFunctionOffset, int opcode)
-            : base()
         {
             if (sendFunctionOffset == 0)
                 throw new ArgumentNullException("Send function offset is empty!");
@@ -69,6 +68,15 @@ namespace FakePacketSender.FakePacket
 
         public void WriteBytes(params byte[] bytes)
         {
+            this.Flush();
+            this.Buffer.AddRange(bytes);
+        }
+
+        public void FillBytes(byte value, int count)
+        {
+            var bytes = new byte[count];
+            for (int i = 0; i < count; ++i)
+                bytes[i] = value;
             this.Flush();
             this.Buffer.AddRange(bytes);
         }

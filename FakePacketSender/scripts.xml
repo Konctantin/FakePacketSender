@@ -68,4 +68,45 @@ print("Done!");
 ]]>
         </Lua>
     </Script>
+    <Script Name="CMSG_QUEST_POI_QUERY_2">
+        <Lua>
+            <![CDATA[
+-- Build 20886
+local sendOffset = 0x6E10;
+local CMSG_QUERY_QUEST_COMPLETION_NPCS=0x04E9;
+local CMSG_QUEST_POI_QUERY = 0x04AF;
+
+local entry = 1;
+print("Start CMSG_QUEST_POI_QUERY");
+
+local packetNPC = CreateFakePacket(sendOffset, CMSG_QUERY_QUEST_COMPLETION_NPCS);
+local packetPOI = CreateFakePacket(sendOffset, CMSG_QUEST_POI_QUERY);
+
+while entry < 50000 do
+    local count = math.random(10,20);
+
+    packetNPC:Clear();
+    packetPOI:Clear();
+
+    packetNPC:WriteInt32(count);
+	packetPOI:WriteInt32(count);
+    for i = 1, count do
+        packetPOI:WriteInt32(entry);
+        packetNPC:WriteInt32(entry);
+        entry = entry + 1;
+    end
+	packetPOI:FillBytes(0, 50-count);
+
+	packetPOI:Send();
+    sleep(25);
+    packetNPC:Send();
+
+    print("Send query "..tostring(count).." quests, entry: "..tostring(entry));
+    sleep(100);
+end
+
+print("Done!");
+]]>
+        </Lua>
+    </Script>
 </ArrayOfScript>
