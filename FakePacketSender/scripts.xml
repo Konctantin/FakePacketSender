@@ -44,6 +44,7 @@ while entry < 50000 do
     packetPOI:Clear();
 
     packetNPC:WriteInt32(count);
+    packetPOI:WriteInt32(count);
 
     for i = 1, count do
         packetPOI:WriteInt32(entry);
@@ -89,7 +90,7 @@ while entry < 50000 do
     packetPOI:Clear();
 
     packetNPC:WriteInt32(count);
-	packetPOI:WriteInt32(count);
+    packetPOI:WriteInt32(count);
     for i = 1, count do
         packetPOI:WriteInt32(entry);
         packetNPC:WriteInt32(entry);
