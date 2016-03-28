@@ -3,10 +3,17 @@
     <Script Name="CMSG_CREATURE_QUERY">
         <Lua>
             <![CDATA[
--- Build 20886
-local sendOffset = 0x6E10;
-local CMSG_CREATURE_QUERY = 0x1002;
-local packet = CreateFakePacket(sendOffset, CMSG_CREATURE_QUERY);
+local info = {
+    [20886] = { Send = 0x6E10, Opcode = 0x1002 }
+    [21355] = { Send = 0x745C, Opcode = 0x31C5 }
+};
+
+local curr = info[build];
+if not curr then
+    assert("Build "..build.." is not supported!");
+end
+
+local packet = CreateFakePacket(curr.Send, curr.Opcode);
 print("Start CMSG_CREATURE_QUERY");
 local entry = 1;
 while entry < 100000 do

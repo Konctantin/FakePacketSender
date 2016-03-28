@@ -42,20 +42,42 @@ namespace FakePacketSender.FakePacket
 
         public void Clear()
         {
-            this.Buffer.Clear();
-            this.WriteInt32(this.Opcode);
-            this.Flush();
+            Buffer.Clear();
+
+            // write header data
+            if (Process.MainModule.FileVersionInfo.FilePrivatePart >= 21336)
+            {
+                WriteInt32(0);
+                WriteInt16((ushort)Opcode);
+            }
+            else
+            {
+                WriteInt32(Opcode);
+            }
+            Flush();
         }
 
         public void WriteBits(uint value, int count)
         {
-            this.Write(value, count);
+            Write(value, count);
+        }
+
+        public void WriteInt16(ushort value)
+        {
+            Flush();
+            Buffer.AddRange(BitConverter.GetBytes(value));
         }
 
         public void WriteInt32(int value)
         {
-            this.Flush();
-            this.Buffer.AddRange(BitConverter.GetBytes(value));
+            Flush();
+            Buffer.AddRange(BitConverter.GetBytes(value));
+        }
+
+        public void WriteInt64(long value)
+        {
+            Flush();
+            Buffer.AddRange(BitConverter.GetBytes(value));
         }
 
         public void WriteFloat(float value)

@@ -43,7 +43,9 @@ namespace FakePacketSender
                 IntelliSienceManager.IntelliSienceCollection = new List<WowApi>() {
                     new WowApi() { Name = "CreateFakePacket", Signature = "packet = CreateFakePaket(sendOffset, opcode)",  Description = "Создает новый пакет для отправки серверу.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteBits",        Signature = ":WriteBits(value, bitcount)",  Description = "Записывает в пакет значение типа uint с указанным количеством бит.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "WriteInt32",       Signature = ":WriteInt32(value)",  Description = "Записывает в пакет значение типа int.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteInt16",       Signature = ":WriteInt16(value)",  Description = "Записывает в пакет значение типа int16.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteInt32",       Signature = ":WriteInt32(value)",  Description = "Записывает в пакет значение типа int32.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteInt64",       Signature = ":WriteInt64(value)",  Description = "Записывает в пакет значение типа int64.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteFloat",       Signature = ":WriteFloat(value)",  Description = "Записывает в пакет значение типа float.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteBytes",       Signature = ":WriteBytes(...)",  Description = "Записывает в пакет последовательность байт.", ImageType = ImageType.Method },
                     new WowApi() { Name = "FillBytes",        Signature = ":FillBytes(value, count)",  Description = "Записывает массив указанного размера заполненого указанным значением.", ImageType = ImageType.Method },
@@ -146,7 +148,9 @@ namespace FakePacketSender
         private void CommandBinding_Play_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             teLog.Clear();
-            var code = teCode.Text;
+            var code = $"function lua_main(build)\n{teCode.Text}\n end \n lua_main({CurentBuild})";
+            CancellationToken token = new CancellationToken();
+
             Task.Run(() =>
             {
                 taskThread = Thread.CurrentThread;
@@ -186,5 +190,8 @@ namespace FakePacketSender
             else
                 e.CanExecute = false;
         }
+
+        public int CurentBuild => System.Diagnostics.Process.GetCurrentProcess()
+            .MainModule.FileVersionInfo.FilePrivatePart;
     }
 }
