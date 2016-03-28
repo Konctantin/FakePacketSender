@@ -9,9 +9,7 @@ local info = {
 };
 
 local curr = info[build];
-if not curr then
-    assert("Build "..build.." is not supported!");
-end
+assert(curr, "Build "..build.." is not supported!");
 
 local packet = CreateFakePacket(curr.Send, curr.Opcode);
 print("Start CMSG_CREATURE_QUERY");
