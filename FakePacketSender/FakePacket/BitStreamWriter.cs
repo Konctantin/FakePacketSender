@@ -11,12 +11,12 @@ namespace MS.Internal.Ink
 
         public BitStreamWriter()
         {
-            this.Buffer = new List<byte>();
+            Buffer = new List<byte>();
         }
 
         public void Flush()
         {
-            this.remaining = 0;
+            remaining = 0;
         }
 
         public void Write(uint bits, int countOfBits)
@@ -31,7 +31,7 @@ namespace MS.Internal.Ink
             {
                 byte bits2 = (byte)(bits >> i * 8);
                 if (num > 0)
-                    this.Write(bits2, num);
+                    Write(bits2, num);
 
                 if (i > 0)
                     num = 8;
@@ -54,7 +54,7 @@ namespace MS.Internal.Ink
             for (int i = 0; i < num; i++)
             {
                 byte bits2 = (byte)(bits >> i * 8);
-                this.Write(bits2, 8);
+                Write(bits2, 8);
             }
         }
 
@@ -63,26 +63,26 @@ namespace MS.Internal.Ink
             if (countOfBits <= 0 || countOfBits > 8)
                 throw new ArgumentOutOfRangeException("countOfBits", countOfBits, "CountOfBitsOutOfRange");
 
-            if (this.remaining > 0)
+            if (remaining > 0)
             {
-                byte b = this.Buffer[this.Buffer.Count - 1];
+                byte b = Buffer[Buffer.Count - 1];
 
-                if (countOfBits > this.remaining)
-                    b |= (byte)(((int)bits & 255 >> 8 - countOfBits) >> countOfBits - this.remaining);
+                if (countOfBits > remaining)
+                    b |= (byte)(((int)bits & 255 >> 8 - countOfBits) >> countOfBits - remaining);
                 else
-                    b |= (byte)(((int)bits & 255 >> 8 - countOfBits) << this.remaining - countOfBits);
+                    b |= (byte)(((int)bits & 255 >> 8 - countOfBits) << remaining - countOfBits);
 
-                this.Buffer[this.Buffer.Count - 1] = b;
+                Buffer[Buffer.Count - 1] = b;
             }
 
-            if (countOfBits > this.remaining)
+            if (countOfBits > remaining)
             {
-                this.remaining = 8 - (countOfBits - this.remaining);
-                byte b = (byte)(bits << this.remaining);
-                this.Buffer.Add(b);
+                remaining = 8 - (countOfBits - remaining);
+                byte b = (byte)(bits << remaining);
+                Buffer.Add(b);
                 return;
             }
-            this.remaining -= countOfBits;
+            remaining -= countOfBits;
         }
     }
 }

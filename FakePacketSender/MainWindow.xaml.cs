@@ -43,9 +43,12 @@ namespace FakePacketSender
                 IntelliSienceManager.IntelliSienceCollection = new List<WowApi>() {
                     new WowApi() { Name = "CreateFakePacket", Signature = "packet = CreateFakePaket(sendOffset, opcode)",  Description = "Создает новый пакет для отправки серверу.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteBits",        Signature = ":WriteBits(value, bitcount)",  Description = "Записывает в пакет значение типа uint с указанным количеством бит.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "WriteInt32",       Signature = ":WriteInt32(value)",  Description = "Записывает в пакет значение типа int.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteInt16",       Signature = ":WriteInt16(value)",  Description = "Записывает в пакет значение типа int16.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteInt32",       Signature = ":WriteInt32(value)",  Description = "Записывает в пакет значение типа int32.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "WriteInt64",       Signature = ":WriteInt64(value)",  Description = "Записывает в пакет значение типа int64.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteFloat",       Signature = ":WriteFloat(value)",  Description = "Записывает в пакет значение типа float.", ImageType = ImageType.Method },
                     new WowApi() { Name = "WriteBytes",       Signature = ":WriteBytes(...)",  Description = "Записывает в пакет последовательность байт.", ImageType = ImageType.Method },
+                    new WowApi() { Name = "FillBytes",        Signature = ":FillBytes(value, count)",  Description = "Записывает массив указанного размера заполненого указанным значением.", ImageType = ImageType.Method },
                     new WowApi() { Name = "Clear",            Signature = ":Clear()",  Description = "Очищает пакет от данных.", ImageType = ImageType.Method },
                     new WowApi() { Name = "Send",             Signature = ":Send()",  Description = "Отправляет данный пакет серверу.", ImageType = ImageType.Method },
                     new WowApi() { Name = "Dump",             Signature = "dump = packet:Dump()",  Description = "Возвращает дамп пакета в виде %02Х.", ImageType = ImageType.Method },
@@ -77,7 +80,7 @@ namespace FakePacketSender
                 Console.WriteLine(ex.Message);
             }
 
-            this.DataContext = scriptList;
+            DataContext = scriptList;
         }
 
         private void RegisterFunctions()
@@ -103,11 +106,7 @@ namespace FakePacketSender
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Save_Click(null, null);
-
-            if (lua != null)
-            {
-                lua.Dispose();
-            }
+            lua?.Dispose();
             Application.Current.Shutdown(0);
         }
 
@@ -127,7 +126,7 @@ namespace FakePacketSender
 
             scriptList.Add(new Script {
                 Name = "<new>",
-                Lua = content.ToString()
+                Lua  = content.ToString()
             });
         }
 
@@ -149,7 +148,9 @@ namespace FakePacketSender
         private void CommandBinding_Play_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             teLog.Clear();
-            var code = teCode.Text;
+            var code = $"function lua_main(build)\n{teCode.Text}\n end \n lua_main({CurentBuild})";
+            CancellationToken token = new CancellationToken();
+
             Task.Run(() =>
             {
                 taskThread = Thread.CurrentThread;
@@ -166,8 +167,7 @@ namespace FakePacketSender
 
         private void CommandBinding_Stop_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (taskThread != null)
-                taskThread.Abort();
+            taskThread?.Abort();
             taskThread = null;
         }
 
@@ -190,5 +190,8 @@ namespace FakePacketSender
             else
                 e.CanExecute = false;
         }
+
+        public int CurentBuild => System.Diagnostics.Process.GetCurrentProcess()
+            .MainModule.FileVersionInfo.FilePrivatePart;
     }
 }

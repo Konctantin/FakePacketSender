@@ -18,12 +18,12 @@ namespace FakePacketSender.FakePacket
 
         public CDataStore(byte* buffer, int size)
         {
-            this.vTable = null;
-            this.Buffer = buffer;
-            this.mBase  = 0;
-            this.alloc  = -1;
+            vTable = null;
+            Buffer = buffer;
+            mBase = 0;
+            alloc = -1;
             this.size   = size;
-            this.read   = 0;
+            read = 0;
         }
     }
 }

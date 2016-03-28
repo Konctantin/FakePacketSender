@@ -16,9 +16,9 @@ namespace FakePacketSender
 
         public ConsoleWriter(string fileName, TextBox editor, bool isRegisterUnhandledException = false)
         {
-            this.m_writer = new StreamWriter(fileName, false, this.Encoding);
-            this.Editor = editor;
-            this.m_writer.AutoFlush = true;
+            m_writer = new StreamWriter(fileName, false, Encoding);
+            Editor = editor;
+            m_writer.AutoFlush = true;
             Console.SetOut(this);
             Debug.Listeners.Add(new TextWriterTraceListener(this));
 
