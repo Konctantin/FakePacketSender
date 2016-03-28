@@ -48,10 +48,8 @@ namespace FakePacketSender.FakePacket
             // write header data
             if (Process.MainModule.FileVersionInfo.FilePrivatePart >= 21336)
             {
-#if test_21355
-                WriteInt32(0);//test
-                m_Read = sizeof(int);//test
-#endif
+                WriteInt32(0);
+                m_Read = sizeof(int);
                 WriteInt16((ushort)Opcode);
             }
             else
