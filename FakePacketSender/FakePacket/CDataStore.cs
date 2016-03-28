@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace FakePacketSender.FakePacket
 {
@@ -16,14 +12,14 @@ namespace FakePacketSender.FakePacket
         public int size;
         public int read;
 
-        public CDataStore(byte* buffer, int size)
+        public CDataStore(byte* buffer, int size, int read = 0)
         {
             vTable = null;
             Buffer = buffer;
             mBase = 0;
             alloc = -1;
-            this.size   = size;
-            read = 0;
+            this.size = size;
+            this.read = read;
         }
     }
 }

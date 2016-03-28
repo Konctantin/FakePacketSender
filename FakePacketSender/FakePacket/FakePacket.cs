@@ -17,6 +17,7 @@ namespace FakePacketSender.FakePacket
 
         private Process Process;
         private Send2 Send2Func;
+        int m_Read = 0;
 
         public FakePacket(int sendFunctionOffset, int opcode)
         {
@@ -47,7 +48,10 @@ namespace FakePacketSender.FakePacket
             // write header data
             if (Process.MainModule.FileVersionInfo.FilePrivatePart >= 21336)
             {
-                WriteInt32(0);
+#if test_21355
+                WriteInt32(0);//test
+                m_Read = sizeof(int);//test
+#endif
                 WriteInt16((ushort)Opcode);
             }
             else
@@ -101,17 +105,14 @@ namespace FakePacketSender.FakePacket
             Buffer.AddRange(bytes);
         }
 
-        public string Dump()
-        {
-            return string.Join(" ", Buffer.Select(n => n.ToString("X02")));
-        }
+        public string Dump() => string.Join(" ", Buffer.Select(n => n.ToString("X02")));
 
         public unsafe void Send()
         {
             var byteBuffer = Buffer.ToArray();
             fixed (byte* bytes = byteBuffer)
             {
-                var packet = new CDataStore(bytes, byteBuffer.Length);
+                var packet = new CDataStore(bytes, byteBuffer.Length, m_Read);
 
                 var packetLen = Marshal.SizeOf(typeof(CDataStore));
                 var packetPtr = Marshal.AllocHGlobal(packetLen);
