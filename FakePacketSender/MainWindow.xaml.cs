@@ -78,7 +78,7 @@ namespace FakePacketSender
                 Console.WriteLine(ex.Message);
             }
 
-            this.DataContext = scriptList;
+            DataContext = scriptList;
         }
 
         private void RegisterFunctions()
@@ -104,11 +104,7 @@ namespace FakePacketSender
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Save_Click(null, null);
-
-            if (lua != null)
-            {
-                lua.Dispose();
-            }
+            lua?.Dispose();
             Application.Current.Shutdown(0);
         }
 
@@ -128,7 +124,7 @@ namespace FakePacketSender
 
             scriptList.Add(new Script {
                 Name = "<new>",
-                Lua = content.ToString()
+                Lua  = content.ToString()
             });
         }
 
@@ -167,8 +163,7 @@ namespace FakePacketSender
 
         private void CommandBinding_Stop_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (taskThread != null)
-                taskThread.Abort();
+            taskThread?.Abort();
             taskThread = null;
         }
 

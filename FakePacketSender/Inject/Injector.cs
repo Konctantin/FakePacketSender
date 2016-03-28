@@ -35,7 +35,7 @@ namespace FakePacketSender.Inject
 
         protected IntPtr CreateRemoteThread(IntPtr func, IntPtr arg)
         {
-            return CreateRemoteThread(this.Process.Handle, 0, 0, func, arg, 0, IntPtr.Zero);
+            return CreateRemoteThread(Process.Handle, 0, 0, func, arg, 0, IntPtr.Zero);
         }
 
         private IntPtr GetHostFuncAddr(string func, ref IntPtr moduleHandle)
@@ -45,7 +45,7 @@ namespace FakePacketSender.Inject
             var offset   = lpInject.ToInt32() - hLoaded.ToInt32();
             FreeLibrary(hLoaded);
 
-            var hostAddr = this.Process.Modules.Cast<ProcessModule>()
+            var hostAddr = Process.Modules.Cast<ProcessModule>()
                 .Where(m => m.FileName == HostDllName)
                 .FirstOrDefault();
 
@@ -63,11 +63,11 @@ namespace FakePacketSender.Inject
             if (string.IsNullOrWhiteSpace(hostName))
                 throw new ArgumentNullException("hostName");
 
-            this.HostDllName  = Path.Combine(Environment.CurrentDirectory, hostName);
+            HostDllName = Path.Combine(Environment.CurrentDirectory, hostName);
 	        var fnLoadLibrary = GetProcAddress(GetModuleHandle("kernel32"), "LoadLibraryA");
 
             // load host
-            var argAddr = WriteCString(this.HostDllName, Encoding.ASCII);
+            var argAddr = WriteCString(HostDllName, Encoding.ASCII);
             var thread  = CreateRemoteThread(fnLoadLibrary, argAddr);
 
             WaitForSingleObject(thread, 0xFFFFFFFF);
@@ -75,7 +75,7 @@ namespace FakePacketSender.Inject
             CloseHandle(thread);
 
             // call host func
-            var injFileName = this.WriteCString(Path.Combine(Environment.CurrentDirectory, @"FakePacketSender.exe"));
+            var injFileName = WriteCString(Path.Combine(Environment.CurrentDirectory, @"FakePacketSender.exe"));
             var moduleHandle = IntPtr.Zero;
 
             var injectFunc = GetHostFuncAddr("Inject", ref moduleHandle);
@@ -85,7 +85,7 @@ namespace FakePacketSender.Inject
             var thread2 = CreateRemoteThread(injectFunc, injFileName);
 
             WaitForSingleObject(thread2, 0xFFFFFFFF);
-            this.Free(injFileName);
+            Free(injFileName);
             CloseHandle(thread2);
 
             // free

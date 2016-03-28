@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MS.Internal.Ink;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -28,18 +26,18 @@ namespace FakePacketSender.FakePacket
             if (opcode == 0)
                 throw new ArgumentNullException("Opcode must be not 0!");
 
-            this.Process = Process.GetCurrentProcess();
+            Process = Process.GetCurrentProcess();
 
-            this.Send2Func = Marshal.GetDelegateForFunctionPointer(
+            Send2Func = Marshal.GetDelegateForFunctionPointer(
                 IntPtr.Add(Process.MainModule.BaseAddress, sendFunctionOffset),
                 typeof(Send2)) as Send2;
 
             if (Send2Func == null)
                 throw new Exception("Can't create delegate \"Send2\"!");
 
-            this.Opcode = opcode;
+            Opcode = opcode;
 
-            this.Clear();
+            Clear();
         }
 
         public void Clear()
@@ -62,14 +60,14 @@ namespace FakePacketSender.FakePacket
 
         public void WriteFloat(float value)
         {
-            this.Flush();
-            this.Buffer.AddRange(BitConverter.GetBytes(value));
+            Flush();
+            Buffer.AddRange(BitConverter.GetBytes(value));
         }
 
         public void WriteBytes(params byte[] bytes)
         {
-            this.Flush();
-            this.Buffer.AddRange(bytes);
+            Flush();
+            Buffer.AddRange(bytes);
         }
 
         public void FillBytes(byte value, int count)
@@ -77,18 +75,18 @@ namespace FakePacketSender.FakePacket
             var bytes = new byte[count];
             for (int i = 0; i < count; ++i)
                 bytes[i] = value;
-            this.Flush();
-            this.Buffer.AddRange(bytes);
+            Flush();
+            Buffer.AddRange(bytes);
         }
 
         public string Dump()
         {
-            return string.Join(" ", this.Buffer.Select(n => n.ToString("X02")));
+            return string.Join(" ", Buffer.Select(n => n.ToString("X02")));
         }
 
         public unsafe void Send()
         {
-            var byteBuffer = this.Buffer.ToArray();
+            var byteBuffer = Buffer.ToArray();
             fixed (byte* bytes = byteBuffer)
             {
                 var packet = new CDataStore(bytes, byteBuffer.Length);

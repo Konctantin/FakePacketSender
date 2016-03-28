@@ -41,7 +41,7 @@ namespace FakePacketSender.Inject
 
         public ProcessMemory(Process process)
         {
-            this.Process = process;
+            Process = process;
         }
 
         public IntPtr Alloc(int size)
@@ -49,7 +49,7 @@ namespace FakePacketSender.Inject
             if (size <= 0)
                 throw new ArgumentNullException("size");
 
-            var address = VirtualAllocEx(this.Process.Handle, IntPtr.Zero, size, AllocationType.Commit, MemoryProtection.ExecuteReadWrite);
+            var address = VirtualAllocEx(Process.Handle, IntPtr.Zero, size, AllocationType.Commit, MemoryProtection.ExecuteReadWrite);
 
             if (address == IntPtr.Zero)
                 throw new Win32Exception();
@@ -62,14 +62,14 @@ namespace FakePacketSender.Inject
             if (address == IntPtr.Zero)
                 throw new ArgumentNullException("address");
 
-            if (!VirtualFreeEx(this.Process.Handle, address, 0, FreeType.Release))
+            if (!VirtualFreeEx(Process.Handle, address, 0, FreeType.Release))
                 throw new Win32Exception();
         }
 
         public unsafe byte[] ReadBytes(IntPtr address, int count)
         {
             var bytes = new byte[count];
-            if(!ReadProcessMemory(this.Process.Handle, address, bytes, count, IntPtr.Zero))
+            if(!ReadProcessMemory(Process.Handle, address, bytes, count, IntPtr.Zero))
                 throw new Win32Exception();
             return bytes;
         }
@@ -77,7 +77,7 @@ namespace FakePacketSender.Inject
         public unsafe T Read<T>(IntPtr address) where T : struct
         {
             var result = new byte[Marshal.SizeOf(typeof(T))];
-            ReadProcessMemory(this.Process.Handle, address, result, result.Length, IntPtr.Zero);
+            ReadProcessMemory(Process.Handle, address, result, result.Length, IntPtr.Zero);
             var handle = GCHandle.Alloc(result, GCHandleType.Pinned);
             T returnObject = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
             handle.Free();
@@ -87,7 +87,7 @@ namespace FakePacketSender.Inject
         public string ReadString(IntPtr addess, int length = 100)
         {
             var result = new byte[length];
-            if (!ReadProcessMemory(this.Process.Handle, addess, result, length, IntPtr.Zero))
+            if (!ReadProcessMemory(Process.Handle, addess, result, length, IntPtr.Zero))
                 throw new Win32Exception();
             return Encoding.UTF8.GetString(result.TakeWhile(ret => ret != 0).ToArray());
         }
@@ -103,7 +103,7 @@ namespace FakePacketSender.Inject
             {
                 Marshal.StructureToPtr(value, hObj, false);
                 Marshal.Copy(hObj, buffer, 0, buffer.Length);
-                if (!WriteProcessMemory(this.Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
+                if (!WriteProcessMemory(Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
                     throw new Win32Exception();
             }
             catch
@@ -126,7 +126,7 @@ namespace FakePacketSender.Inject
             {
                 Marshal.StructureToPtr(value, hObj, false);
                 Marshal.Copy(hObj, buffer, 0, buffer.Length);
-                if (!WriteProcessMemory(this.Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
+                if (!WriteProcessMemory(Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
                     throw new Win32Exception();
             }
             finally
@@ -137,23 +137,23 @@ namespace FakePacketSender.Inject
 
         public IntPtr Write(byte[] buffer)
         {
-            var addr = this.Alloc(buffer.Length);
+            var addr = Alloc(buffer.Length);
             if (addr == IntPtr.Zero)
                 throw new Win32Exception();
-            this.Write(addr, buffer);
+            Write(addr, buffer);
             return addr;
         }
 
         public void Write(IntPtr address, byte[] buffer)
         {
-            if (!WriteProcessMemory(this.Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
+            if (!WriteProcessMemory(Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
                 throw new Win32Exception();
         }
 
         public void WriteCString(IntPtr address, string str)
         {
             var buffer = Encoding.UTF8.GetBytes(str + '\0');
-            if (!WriteProcessMemory(this.Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
+            if (!WriteProcessMemory(Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
                 throw new Win32Exception();
         }
 
@@ -161,7 +161,7 @@ namespace FakePacketSender.Inject
         {
             var buffer = encoding.GetBytes(str + '\0');
             var address = Alloc(buffer.Length);
-            if (!WriteProcessMemory(this.Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
+            if (!WriteProcessMemory(Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
                 throw new Win32Exception();
             return address;
         }
@@ -170,7 +170,7 @@ namespace FakePacketSender.Inject
         {
             var buffer = Encoding.UTF8.GetBytes(str + '\0');
             var address = Alloc(buffer.Length);
-            if (!WriteProcessMemory(this.Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
+            if (!WriteProcessMemory(Process.Handle, address, buffer, buffer.Length, IntPtr.Zero))
                 throw new Win32Exception();
             return address;
         }
@@ -277,12 +277,12 @@ namespace FakePacketSender.Inject
         */
         public IntPtr Rebase(IntPtr offset)
         {
-            return new IntPtr(offset.ToInt64() + this.Process.MainModule.BaseAddress.ToInt64());
+            return new IntPtr(offset.ToInt64() + Process.MainModule.BaseAddress.ToInt64());
         }
 
         public bool IsFocusWindow
         {
-            get { return this.Process.MainWindowHandle == GetForegroundWindow(); }
+            get { return Process.MainWindowHandle == GetForegroundWindow(); }
         }
 
     }

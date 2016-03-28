@@ -23,8 +23,8 @@ namespace FakePacketSender
             set
             {
                 if (value == null || string.IsNullOrWhiteSpace(value.Value))
-                    this.Lua = string.Empty;
-                this.Lua = value.Value.Trim();
+                    Lua = string.Empty;
+                Lua = value.Value.Trim();
             }
         }
     }

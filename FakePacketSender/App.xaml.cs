@@ -58,7 +58,7 @@ namespace FakePacketSender
             }
             finally
             {
-                this.Shutdown(1);
+                Shutdown(1);
             }
         }
     }
