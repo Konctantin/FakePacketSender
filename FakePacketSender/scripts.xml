@@ -6,6 +6,7 @@
 local info = {
     [20886] = { Send = 0x6E10, Opcode = 0x1002 },
     [21355] = { Send = 0x745C, Opcode = 0x31C5 },
+    [21463] = { Send = 0x745C, Opcode = 0x31C5 },
 };
 
 local curr = info[build];
