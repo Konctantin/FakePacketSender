@@ -120,13 +120,13 @@ namespace FakePacketSender
         {
             using (var file = File.Open(fullFileName, FileMode.Create))
                 new XmlSerializer(typeof(ObservableCollection<Script>)).Serialize(file, scriptList);
-            Console.WriteLine("Сохранено!");
+            Console.WriteLine("Saved!");
         }
 
         private void CommandBinding_Play_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var code = $"function lua_main(build)\n    {teCode.Text}\nend\nlua_main({CurentBuild})";
-            taskThread = new Thread(new ThreadStart(new Action(delegate ()
+            taskThread = new Thread(delegate()
             {
                 try
                 {
@@ -140,7 +140,7 @@ namespace FakePacketSender
                 {
                     Console.WriteLine(ex.Message);
                 }
-            })));
+            });
             taskThread.Start();
         }
 
