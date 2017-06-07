@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Windows;
 using FakePacketSender.Inject;
+using System.Reflection;
+using System.IO;
 
 namespace FakePacketSender
 {
@@ -14,6 +16,13 @@ namespace FakePacketSender
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (e.Args.Length == 1 && e.Args[0] == "/ui")
+            {
+                StartupPath = Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location);
+                Current.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
+                return;
+            }
+
             var process = Process.GetProcessesByName("wow");
             try
             {

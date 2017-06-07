@@ -1,6 +1,6 @@
 ﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:luaeditor="clr-namespace:FakePacketSender.CodeEditor"
         x:Class="FakePacketSender.MainWindow"
         Title="MainWindow"
         Height="400"
@@ -46,7 +46,7 @@
                  Grid.Column="1" Height="23" Margin="411,7,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
 
         <Border BorderThickness="1" BorderBrush="#FF17AD1A" Grid.Column="1" Grid.Row="1" Margin="0,0,0,5">
-            <avalonedit:TextEditor Name="teCode" FontFamily="Consolas" Text="{Binding Lua, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <luaeditor:LuaCodeEditor x:Name="teCode" FontFamily="Consolas" Document="{Binding Lua}" />
         </Border>
 
         <Border BorderThickness="1" BorderBrush="#FF17AD1A" Grid.Column="1" Grid.Row="2">

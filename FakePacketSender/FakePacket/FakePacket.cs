@@ -3,20 +3,23 @@ using System.Linq;
 using MS.Internal.Ink;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace FakePacketSender.FakePacket
 {
-    public class FakePacket
-        : BitStreamWriter
+    public class FakePacket : BitStreamWriter
     {
         // DWORD __stdcall ClientConnection::Send(CDataStore*);
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        delegate uint Send2(IntPtr packet);
+        delegate uint Send2_x32(IntPtr packet);
+
+        [UnmanagedFunctionPointer(CallingConvention.FastCall)]
+        delegate uint Send2_x64(IntPtr packet);
 
         public int Opcode { get; private set; }
 
         private Process Process;
-        private Send2 Send2Func;
+        private Send2_x32 Send2Func;
         int m_Read = 0;
 
         public FakePacket(int sendFunctionOffset, int opcode)
@@ -29,12 +32,13 @@ namespace FakePacketSender.FakePacket
 
             Process = Process.GetCurrentProcess();
 
-            Send2Func = Marshal.GetDelegateForFunctionPointer(
-                IntPtr.Add(Process.MainModule.BaseAddress, sendFunctionOffset),
-                typeof(Send2)) as Send2;
-
-            if (Send2Func == null)
-                throw new Exception("Can't create delegate \"Send2\"!");
+            // not debug ui mode
+            if (!Assembly.GetAssembly(typeof(FakePacket)).Location.Equals(Process.MainModule.FileName))
+            {
+                Send2Func = Marshal.GetDelegateForFunctionPointer(
+                    IntPtr.Add(Process.MainModule.BaseAddress, sendFunctionOffset),
+                    typeof(Send2_x32)) as Send2_x32;
+            }
 
             Opcode = opcode;
 
@@ -119,7 +123,14 @@ namespace FakePacketSender.FakePacket
 
                 try
                 {
-                    Send2Func(packetPtr);
+                    if (Send2Func == null)
+                    {
+                        Console.WriteLine(".. Fake [Send2] ..");
+                    }
+                    else
+                    {
+                        Send2Func(packetPtr);
+                    }
                 }
                 catch (Exception ex)
                 {

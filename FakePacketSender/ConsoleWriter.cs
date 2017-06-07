@@ -91,12 +91,21 @@ namespace FakePacketSender
             if (m_writer != null)
                 m_writer.Write(content);
 
+            Action write = delegate() {
+                Editor.AppendText(text);
+                Editor.ScrollToEnd();
+            };
+
             if (Editor != null)
             {
-                Editor.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(()=> {
-                    Editor.AppendText(text);
-                    Editor.ScrollToEnd();
-                }));
+                if (!Editor.Dispatcher.CheckAccess())
+                {
+                    Editor.Dispatcher.BeginInvoke(write);
+                }
+                else
+                {
+                    write();
+                }
             }
         }
 

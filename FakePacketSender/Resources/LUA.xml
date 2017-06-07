@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<SyntaxDefinition name="LUA" extensions=".lua" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+    <Color name="Comment"       foreground="Gray"       fontStyle="oblique"     exampleText="-- comment" />
+    <Color name="String"        foreground="#FF5E5EAE"                          exampleText="text = &quot;Hello, World!&quot;" />
+    <Color name="Operators"     foreground="#FFFF0F27"                          exampleText="= + * /"/>
+    <Color name="Keywords"      foreground="#FF569CD6"   fontWeight="bold"      exampleText="if then else end function" />
+    <Color name="Extra"         foreground="#FFE07534"   fontWeight="bold"      exampleText="self" />
+    <Color name="Functions"     foreground="#FF0080C0"   fontWeight="bold"      exampleText="print" />
+    <Color name="Number"        foreground="#FF9812C1"                          exampleText="123 0x45" />
+
+    <RuleSet ignoreCase="false">
+
+        <Span color="Comment" multiline="true">
+            <Begin><![CDATA[--\[\[]]></Begin>
+            <End><![CDATA[]]]]></End>
+        </Span>
+
+        <Span color="Comment">
+            <Begin>--</Begin>
+        </Span>
+
+        <Span color="String" multiline="true">
+            <Begin><![CDATA[\[\[]]></Begin>
+            <End><![CDATA[]]]]></End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+
+        <Span color="String">
+            <Begin>'</Begin>
+            <End>'</End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+
+        <Keywords color="Extra" fontStyle="oblique">
+            <Word>self</Word>
+        </Keywords>
+
+        <Keywords color="Operators" fontStyle="oblique">
+            <Word><![CDATA[+]]></Word>
+            <Word><![CDATA[-]]></Word>
+            <Word><![CDATA[*]]></Word>
+            <Word><![CDATA[/]]></Word>
+            <Word><![CDATA[%]]></Word>
+            <Word><![CDATA[^]]></Word>
+            <Word><![CDATA[#]]></Word>
+            <Word><![CDATA[==]]></Word>
+            <Word><![CDATA[~=]]></Word>
+            <Word><![CDATA[<=]]></Word>
+            <Word><![CDATA[>=]]></Word>
+            <Word><![CDATA[<]]></Word>
+            <Word><![CDATA[>]]></Word>
+            <Word><![CDATA[=]]></Word>
+            <Word><![CDATA[(]]></Word>
+            <Word><![CDATA[)]]></Word>
+            <Word><![CDATA[{]]></Word>
+            <Word><![CDATA[}]]></Word>
+            <Word><![CDATA[[]]></Word>
+            <Word><![CDATA[]]]></Word>
+            <Word><![CDATA[;]]></Word>
+            <Word><![CDATA[:]]></Word>
+            <Word><![CDATA[,]]></Word>
+            <Word><![CDATA[.]]></Word>
+            <Word><![CDATA[..]]></Word>
+            <Word><![CDATA[...]]></Word>
+        </Keywords>
+
+        <Keywords color="Keywords">
+            <Word>and</Word>
+            <Word>break</Word>
+            <Word>do</Word>
+            <Word>else</Word>
+            <Word>elseif</Word>
+            <Word>end</Word>
+            <Word>false</Word>
+            <Word>for</Word>
+            <Word>function</Word>
+            <Word>if</Word>
+            <Word>in</Word>
+            <Word>local</Word>
+            <Word>nil</Word>
+            <Word>not</Word>
+            <Word>or</Word>
+            <Word>repeat</Word>
+            <Word>return</Word>
+            <Word>then</Word>
+            <Word>true</Word>
+            <Word>until</Word>
+            <Word>while</Word>
+        </Keywords>
+
+        <Rule color="Functions">[\d\w_]+(?=(\s*\())</Rule>
+
+        <Rule color="Number">
+            \b0[xX][0-9a-fA-F]+  # hex number
+            |
+            (	\b\d+(\.[0-9]+)?   # number with optional floating point
+            |	\.[0-9]+           # or just starting with floating point
+            )
+            ([eE][+-]?[0-9]+)?   # optional exponent
+        </Rule>
+    </RuleSet>
+</SyntaxDefinition>
