@@ -10,6 +10,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
 using FakePacketSender.CodeEditor.Bracket;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace FakePacketSender.CodeEditor
 {
@@ -20,7 +21,7 @@ namespace FakePacketSender.CodeEditor
         LuaFoldingStrategy foldingStrategy = new LuaFoldingStrategy();
 
         public LuaCodeEditor()
-            : base(new TextArea() { Document = new ICSharpCode.AvalonEdit.Document.TextDocument() })
+            : base(new TextArea() { Document = new TextDocument() })
         {
             Options.ShowTabs = true;
             Options.ConvertTabsToSpaces = true;
@@ -65,7 +66,8 @@ namespace FakePacketSender.CodeEditor
             TextArea.DocumentChanged += (o, e) => {
                 if (foldingManager != null)
                     FoldingManager.Uninstall(foldingManager);
-                foldingManager = FoldingManager.Install(o as TextArea);
+                if (TextArea.Document != null)
+                    foldingManager = FoldingManager.Install(TextArea);
             };
         }
 

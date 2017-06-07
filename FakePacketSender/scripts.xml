@@ -4,6 +4,8 @@
         <Lua>
             <![CDATA[
 local info = {
+    -- test ui
+    [0] = { Send = 1, Opcode = 2 },
     -- 6.x.x
     [20886] = { Send = 0x6E10, Opcode = 0x1002 },
     [21355] = { Send = 0x745C, Opcode = 0x31C5 },

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using NLua;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace FakePacketSender
 {
@@ -47,7 +48,10 @@ namespace FakePacketSender
                 }
                 else
                 {
-                    scriptList.Add(new Script { Name = "<new>", Lua = "-- local packet = CreateFakePacket(0);" });
+                    scriptList.Add(new Script {
+                        Name = "<new>",
+                        Lua = new TextDocument("-- local packet = CreateFakePacket(0);")
+                    });
                 }
             }
             catch (Exception ex)
@@ -101,7 +105,7 @@ namespace FakePacketSender
 
             scriptList.Add(new Script {
                 Name = "<new>",
-                Lua  = content.ToString()
+                Lua  = new TextDocument(content.ToString())
             });
         }
 
@@ -123,7 +127,8 @@ namespace FakePacketSender
         private void CommandBinding_Play_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             teLog.Clear();
-            var code = $"function lua_main(build)\n{teCode.Text}\n end \n lua_main({CurentBuild})";
+
+            var code = $"function lua_main(build)\n    {teCode.Text}\nend\nlua_main({CurentBuild})";
             CancellationToken token = new CancellationToken();
 
             Task.Run(() =>

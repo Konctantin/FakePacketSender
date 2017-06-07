@@ -3,6 +3,7 @@ using System.Linq;
 using MS.Internal.Ink;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace FakePacketSender.FakePacket
 {
@@ -31,12 +32,13 @@ namespace FakePacketSender.FakePacket
 
             Process = Process.GetCurrentProcess();
 
-            Send2Func = Marshal.GetDelegateForFunctionPointer(
-                IntPtr.Add(Process.MainModule.BaseAddress, sendFunctionOffset),
-                typeof(Send2_x32)) as Send2_x32;
-
-            if (Send2Func == null)
-                throw new Exception("Can't create delegate \"Send2\"!");
+            // not debug ui mode
+            if (!Assembly.GetAssembly(typeof(FakePacket)).Location.Equals(Process.MainModule.FileName))
+            {
+                Send2Func = Marshal.GetDelegateForFunctionPointer(
+                    IntPtr.Add(Process.MainModule.BaseAddress, sendFunctionOffset),
+                    typeof(Send2_x32)) as Send2_x32;
+            }
 
             Opcode = opcode;
 
@@ -121,7 +123,14 @@ namespace FakePacketSender.FakePacket
 
                 try
                 {
-                    Send2Func(packetPtr);
+                    if (Send2Func == null)
+                    {
+                        Console.WriteLine(".. Fake [Send2] ..");
+                    }
+                    else
+                    {
+                        Send2Func(packetPtr);
+                    }
                 }
                 catch (Exception ex)
                 {

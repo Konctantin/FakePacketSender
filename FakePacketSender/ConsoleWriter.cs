@@ -93,7 +93,7 @@ namespace FakePacketSender
 
             if (Editor != null)
             {
-                Editor.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(()=> {
+                Editor.Dispatcher.BeginInvoke(new Action(()=> {
                     Editor.AppendText(text);
                     Editor.ScrollToEnd();
                 }));

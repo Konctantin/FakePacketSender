@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using ICSharpCode.AvalonEdit.Document;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace FakePacketSender
@@ -9,18 +10,18 @@ namespace FakePacketSender
         public string Name { get; set; }
 
         [XmlIgnore]
-        public string Lua { get; set; }
+        public TextDocument Lua { get; set; } = new TextDocument();
 
         [XmlElement("Lua")]
         public XmlCDataSection _lua
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(Lua))
+                if (string.IsNullOrWhiteSpace(Lua.Text))
                     return null;
-                return new XmlDocument().CreateCDataSection("\n" + Lua + "\n");
+                return new XmlDocument().CreateCDataSection("\n" + Lua.Text + "\n");
             }
-            set => Lua = value?.Value?.Trim() ?? "";
+            set => Lua = new TextDocument(value?.Value?.Trim() ?? "");
         }
     }
 }

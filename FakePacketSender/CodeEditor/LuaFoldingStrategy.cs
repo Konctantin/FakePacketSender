@@ -19,8 +19,7 @@ namespace FakePacketSender.CodeEditor
         /// </summary>
         public void UpdateFoldings(FoldingManager manager, TextDocument document)
         {
-            int firstErrorOffset;
-            var foldings = CreateNewFoldings(document, out firstErrorOffset);
+            var foldings = CreateNewFoldings(document, out int firstErrorOffset);
             manager.UpdateFoldings(foldings, firstErrorOffset);
         }
 
