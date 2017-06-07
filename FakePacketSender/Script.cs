@@ -19,13 +19,8 @@ namespace FakePacketSender
                 if (string.IsNullOrWhiteSpace(Lua))
                     return null;
                 return new XmlDocument().CreateCDataSection("\n" + Lua + "\n");
-              }
-            set
-            {
-                if (value == null || string.IsNullOrWhiteSpace(value.Value))
-                    Lua = string.Empty;
-                Lua = value.Value.Trim();
             }
+            set => Lua = value?.Value?.Trim() ?? "";
         }
     }
 }

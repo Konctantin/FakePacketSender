@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -9,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
-using ICSharpCode.AvalonEdit.CodeCompletion;
 using NLua;
 
 namespace FakePacketSender
@@ -39,28 +36,6 @@ namespace FakePacketSender
                 Console.WriteLine("StartUp: " + App.StartupPath);
 
                 RegisterFunctions();
-
-                IntelliSienceManager.IntelliSienceCollection = new List<WowApi>() {
-                    new WowApi() { Name = "CreateFakePacket", Signature = "packet = CreateFakePaket(sendOffset, opcode)",  Description = "Создает новый пакет для отправки серверу.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "WriteBits",        Signature = ":WriteBits(value, bitcount)",  Description = "Записывает в пакет значение типа uint с указанным количеством бит.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "WriteInt16",       Signature = ":WriteInt16(value)",  Description = "Записывает в пакет значение типа int16.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "WriteInt32",       Signature = ":WriteInt32(value)",  Description = "Записывает в пакет значение типа int32.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "WriteInt64",       Signature = ":WriteInt64(value)",  Description = "Записывает в пакет значение типа int64.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "WriteFloat",       Signature = ":WriteFloat(value)",  Description = "Записывает в пакет значение типа float.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "WriteBytes",       Signature = ":WriteBytes(...)",  Description = "Записывает в пакет последовательность байт.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "FillBytes",        Signature = ":FillBytes(value, count)",  Description = "Записывает массив указанного размера заполненого указанным значением.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "Clear",            Signature = ":Clear()",  Description = "Очищает пакет от данных.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "Send",             Signature = ":Send()",  Description = "Отправляет данный пакет серверу.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "Dump",             Signature = "dump = packet:Dump()",  Description = "Возвращает дамп пакета в виде %02Х.", ImageType = ImageType.Method },
-                    new WowApi() { Name = "sleep",            Signature = "sleep(ms)",  Description = "Приостанавливает работу потока на указанное количество милисекунд.", ImageType = ImageType.Method },
-
-                    new WowApi() { Name = "bor",             Signature = "val = bor(lval, rval)",   Description = "val = lval | rval",  ImageType = ImageType.Method },
-                    new WowApi() { Name = "bxor",            Signature = "val = bxor(lval, rval)",  Description = "val = lval ^ rval",  ImageType = ImageType.Method },
-                    new WowApi() { Name = "band",            Signature = "val = band(lval, rval)",  Description = "val = lval & rval",  ImageType = ImageType.Method },
-                    new WowApi() { Name = "bnot",            Signature = "val = bnot(lval, rval)",  Description = "val = lval & ~rval", ImageType = ImageType.Method },
-                    new WowApi() { Name = "blsh",            Signature = "val = blsh(lval, rval)",  Description = "val = lval << rval", ImageType = ImageType.Method },
-                    new WowApi() { Name = "brsh",            Signature = "val = brsh(lval, rval)",  Description = "val = lval >> rval", ImageType = ImageType.Method },
-                };
 
                 if (File.Exists(fullFileName))
                 {

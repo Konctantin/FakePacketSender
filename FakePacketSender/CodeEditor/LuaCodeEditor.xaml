@@ -1,0 +1,101 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:FakePacketSender.CodeEditor"
+    xmlns:folding="clr-namespace:ICSharpCode.AvalonEdit.Folding;assembly=ICSharpCode.AvalonEdit"
+    xmlns:AvalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    >
+    <Style TargetType="{x:Type local:LuaCodeEditor}">
+        <Setter Property="Foreground"    Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Background"    Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+        <Setter Property="FlowDirection"   Value="LeftToRight" />
+        <Setter Property="WordWrap"        Value="False" />
+        <Setter Property="ShowLineNumbers" Value="True" />
+
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem Command="Cut"    Header="Cut"    />
+                    <MenuItem Command="Copy"   Header="Copy"   />
+                    <MenuItem Command="Paste"  Header="Paste"  />
+                    <MenuItem Command="Delete" Header="Delete" />
+                    <Separator />
+                    <MenuItem Command="Undo"   Header="Undo"   />
+                    <MenuItem Command="Redo"   Header="Redo"   />
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type AvalonEdit:TextEditor}">
+                    <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}">
+                        <ScrollViewer Name="PART_ScrollViewer"
+						    Focusable                   ="False"
+						    CanContentScroll            ="True"
+                            VerticalContentAlignment    ="Top"
+						    HorizontalContentAlignment  ="Left"
+
+						    VerticalScrollBarVisibility     ="{TemplateBinding VerticalScrollBarVisibility}"
+						    HorizontalScrollBarVisibility   ="{TemplateBinding HorizontalScrollBarVisibility}"
+						    Content                         ="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextArea}"
+						    Background                      ="{TemplateBinding Background}"
+						    Padding                         ="{TemplateBinding Padding}"
+						    BorderBrush                     ="{TemplateBinding BorderBrush}"
+						    BorderThickness                 ="{TemplateBinding BorderThickness}"
+                        />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="WordWrap" Value="True">
+                            <Setter TargetName="PART_ScrollViewer" Property="HorizontalScrollBarVisibility" Value="Disabled" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type folding:FoldingMargin}">
+        <Setter Property="FoldingMarkerBrush"                   Value="#FF4A5A6A" />
+        <Setter Property="FoldingMarkerBackgroundBrush"         Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+        <Setter Property="SelectedFoldingMarkerBrush"           Value="#FF4A5A6A" />
+        <Setter Property="SelectedFoldingMarkerBackgroundBrush" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+    </Style>
+
+    <Style TargetType="{x:Type AvalonEdit:TextArea}">
+        <Setter Property="FocusVisualStyle"      Value="{x:Null}" />
+        <Setter Property="SelectionForeground"   Value="{x:Null}" />
+        <Setter Property="SelectionCornerRadius" Value="0.0" />
+
+        <Setter Property="SelectionBrush">
+            <Setter.Value>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity="0.2" />
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="SelectionBorder">
+            <Setter.Value>
+                <Pen Brush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Thickness="0" />
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type AvalonEdit:TextArea}">
+                    <DockPanel Focusable="False">
+                        <ItemsControl DockPanel.Dock="Left" Focusable="False"
+                                      ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LeftMargins}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                        <ContentPresenter Panel.ZIndex="-1" Focusable="False"
+                                          Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextView}" />
+                    </DockPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
