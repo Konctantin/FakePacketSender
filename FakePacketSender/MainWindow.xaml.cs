@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
@@ -126,23 +125,23 @@ namespace FakePacketSender
 
         private void CommandBinding_Play_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            teLog.Clear();
-
             var code = $"function lua_main(build)\n    {teCode.Text}\nend\nlua_main({CurentBuild})";
-            CancellationToken token = new CancellationToken();
-
-            Task.Run(() =>
+            taskThread = new Thread(new ThreadStart(new Action(delegate ()
             {
-                taskThread = Thread.CurrentThread;
                 try
                 {
                     lua.DoString(code);
+                }
+                catch (ThreadAbortException)
+                {
+                    Console.WriteLine("Aborted by user");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-            });
+            })));
+            taskThread.Start();
         }
 
         private void CommandBinding_Stop_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -153,22 +152,12 @@ namespace FakePacketSender
 
         private void CommandBinding_Play_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (taskThread == null)
-                e.CanExecute = true;
-            else if ((taskThread.ThreadState & (ThreadState.Running | ThreadState.Background)) == 0)
-                e.CanExecute = true;
-            else
-                e.CanExecute = false;
+            e.CanExecute = taskThread?.IsAlive != true;
         }
 
         private void CommandBinding_Stop_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (taskThread == null)
-                e.CanExecute = false;
-            else if ((taskThread.ThreadState & (ThreadState.Running | ThreadState.Background)) != 0)
-                e.CanExecute = true;
-            else
-                e.CanExecute = false;
+            e.CanExecute = taskThread?.IsAlive == true;
         }
 
         public int CurentBuild => System.Diagnostics.Process.GetCurrentProcess()

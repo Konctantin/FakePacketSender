@@ -18,7 +18,7 @@ namespace FakePacketSender
         {
             if (e.Args.Length == 1 && e.Args[0] == "/ui")
             {
-                StartupPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                StartupPath = Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location);
                 Current.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
                 return;
             }
