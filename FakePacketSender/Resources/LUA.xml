@@ -8,9 +8,6 @@
     <Color name="Extra"         foreground="#FFE07534"   fontWeight="bold"      exampleText="self" />
     <Color name="Functions"     foreground="#FF0080C0"   fontWeight="bold"      exampleText="print" />
     <Color name="Number"        foreground="#FF9812C1"                          exampleText="123 0x45" />
-    <Color name="WowFunctions"  foreground="#FF00AAAA"                          exampleText="GetTime" />
-    <Color name="Class"         foreground="#FF10C07D"                          exampleText="PLAYER" />
-    <Color name="ClassMembers"  foreground="#FF7910C0"                          exampleText="PLAYER.IsMoving" />
 
     <RuleSet ignoreCase="false">
 
@@ -49,39 +46,6 @@
 
         <Keywords color="Extra" fontStyle="oblique">
             <Word>self</Word>
-        </Keywords>
-
-        <Keywords color="Class" fontStyle="oblique">
-            <Word>PLAYER</Word>
-            <Word>PartyLogic</Word>
-            <Word>BossModLogic</Word>
-        </Keywords>
-
-        <Keywords color="ClassMembers" fontStyle="oblique">
-            <Word>IsMoving</Word>
-            <Word>InCombat</Word>
-            <Word>Power</Word>
-            <Word>Exec</Word>
-            <Word>HP</Word>
-            <Word>First</Word>
-            <Word>members</Word>
-            <Word>HasTank</Word>
-            <Word>GetMainClassSpell</Word>
-            <Word>GetDispellType</Word>
-            <Word>InsertNewUnitToHeallersTable</Word>
-            <Word>CheckInstanseLogic</Word>
-            <Word>Init</Word>
-            <Word>GetMember</Word>
-            <Word>GetDispellInfo</Word>
-            <Word>DontDispell</Word>
-            <Word>LowHP</Word>
-            <Word>Agro</Word>
-            <Word>Unit</Word>
-            <Word>IsTank</Word>
-            <Word>IsHeal</Word>
-            <Word>IncHeal</Word>
-            <Word>Absorb</Word>
-            <Word>DontHeal</Word>
         </Keywords>
 
         <Keywords color="Operators" fontStyle="oblique">
@@ -137,131 +101,7 @@
             <Word>while</Word>
         </Keywords>
 
-        <Keywords color="Functions">
-            <Word>string</Word>
-            <Word>math</Word>
-            <Word>abs</Word>
-            <Word>acos</Word>
-            <Word>acos</Word>
-            <Word>asin</Word>
-            <Word>asin</Word>
-            <Word>assert</Word>
-            <Word>atan</Word>
-            <Word>atan</Word>
-            <Word>atan2</Word>
-            <Word>atan2</Word>
-            <Word>ceil</Word>
-            <Word>collectgarbage</Word>
-            <Word>cos</Word>
-            <Word>cos</Word>
-            <Word>date</Word>
-            <Word>debugbreak</Word>
-            <Word>debugdump</Word>
-            <Word>debughook</Word>
-            <Word>debuginfo</Word>
-            <Word>debugload</Word>
-            <Word>debuglocals</Word>
-            <Word>debugprint</Word>
-            <Word>debugprofilestart</Word>
-            <Word>debugprofilestop</Word>
-            <Word>debugstack</Word>
-            <Word>debugtimestamp</Word>
-            <Word>deg</Word>
-            <Word>difftime</Word>
-            <Word>error</Word>
-            <Word>exp</Word>
-            <Word>floor</Word>
-            <Word>forceinsecure</Word>
-            <Word>foreach</Word>
-            <Word>foreachi</Word>
-            <Word>format</Word>
-            <Word>frexp</Word>
-            <Word>gcinfo</Word>
-            <Word>geterrorhandler</Word>
-            <Word>getfenv</Word>
-            <Word>getglobal</Word>
-            <Word>getmetatable</Word>
-            <Word>getn</Word>
-            <Word>getprinthandler</Word>
-            <Word>gmatch</Word>
-            <Word>gsub</Word>
-            <Word>hooksecurefunc</Word>
-            <Word>ipairs</Word>
-            <Word>issecure</Word>
-            <Word>issecurevariable</Word>
-            <Word>ldexp</Word>
-            <Word>loadstring</Word>
-            <Word>log</Word>
-            <Word>log10</Word>
-            <Word>max</Word>
-            <Word>message</Word>
-            <Word>min</Word>
-            <Word>mod</Word>
-            <Word>newproxy</Word>
-            <Word>next</Word>
-            <Word>pairs</Word>
-            <Word>pcall</Word>
-            <Word>print</Word>
-            <Word>rad</Word>
-            <Word>random</Word>
-            <Word>rawequal</Word>
-            <Word>rawget</Word>
-            <Word>rawset</Word>
-            <Word>scrub</Word>
-            <Word>securecall</Word>
-            <Word>select</Word>
-            <Word>seterrorhandler</Word>
-            <Word>setfenv</Word>
-            <Word>setglobal</Word>
-            <Word>setmetatable</Word>
-            <Word>setprinthandler</Word>
-            <Word>sin</Word>
-            <Word>sin</Word>
-            <Word>sort</Word>
-            <Word>sqrt</Word>
-            <Word>strbyte</Word>
-            <Word>strchar</Word>
-            <Word>strconcat</Word>
-            <Word>strfind</Word>
-            <Word>strjoin</Word>
-            <Word>strlen</Word>
-            <Word>strlenutf8</Word>
-            <Word>strlower</Word>
-            <Word>strmatch</Word>
-            <Word>strrep</Word>
-            <Word>strrev</Word>
-            <Word>strsplit</Word>
-            <Word>strsub</Word>
-            <Word>strtrim</Word>
-            <Word>strupper</Word>
-            <Word>tContains</Word>
-            <Word>tDelete</Word>
-            <Word>tan</Word>
-            <Word>tan</Word>
-            <Word>time</Word>
-            <Word>tinsert</Word>
-            <Word>tonumber</Word>
-            <Word>tostring</Word>
-            <Word>tostringall</Word>
-            <Word>tremove</Word>
-            <Word>type</Word>
-            <Word>unpack</Word>
-            <Word>wipe</Word>
-            <Word>xpcall</Word>
-            <Word>table</Word>
-            <Word>insert</Word>
-            <Word>remove</Word>
-            <Word>setn</Word>
-            <Word>getn</Word>
-            <Word>foreach</Word>
-            <Word>foreachi</Word>
-            <Word>bit</Word>
-            <Word>bit</Word>
-            <Word>band</Word>
-            <Word>bor</Word>
-            <Word>bnot</Word>
-            <Word>bxor</Word>
-        </Keywords>
+        <Rule color="Functions">[\d\w_]+(?=(\s*\())</Rule>
 
         <Rule color="Number">
             \b0[xX][0-9a-fA-F]+  # hex number
