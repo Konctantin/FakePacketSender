@@ -134,7 +134,7 @@ namespace FakePacketSender
                 }
                 catch (ThreadAbortException)
                 {
-                    Console.WriteLine("Aborted by user");
+                    Console.WriteLine("Aborted!");
                 }
                 catch (Exception ex)
                 {
