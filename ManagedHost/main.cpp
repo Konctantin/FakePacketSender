@@ -1,3 +1,4 @@
+#include <comdef.h>
 #include <metahost.h>
 #include <Windows.h>
 #include <MSCorEE.h>
